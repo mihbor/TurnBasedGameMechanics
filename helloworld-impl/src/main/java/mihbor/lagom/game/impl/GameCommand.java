@@ -6,7 +6,9 @@ import mihbor.lagom.game.impl.GameEvent.*;
 
 public interface GameCommand {
 	
-	public final class ProposeGame implements GameCommand, PersistentEntity.ReplyType<GameProposed> {}
+	public final class ProposeGame implements GameCommand, PersistentEntity.ReplyType<GameProposed> {
+		String name;
+	}
 	public final class JoinGame implements GameCommand, PersistentEntity.ReplyType<PlayerJoinedGame> {}
 	public final class StartGame implements GameCommand, PersistentEntity.ReplyType<GameStarted> {}
 	public final class SetPlayerOrder implements GameCommand, PersistentEntity.ReplyType<PlayerOrderSet> {}
