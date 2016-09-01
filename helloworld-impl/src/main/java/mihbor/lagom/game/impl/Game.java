@@ -15,7 +15,19 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 
 		b.setCommandHandler(
 			ProposeGame.class, 
-			(cmd, ctx) -> ctx.thenPersist(new GameProposed(cmd.name), evt -> ctx.reply(evt))
+			(cmd, ctx) -> {
+				if(state().name == null) {
+					return ctx.thenPersist(new GameProposed(cmd.name), evt -> ctx.reply(evt));
+				} else { // already proposed, we're idempotent, so reply GameProposed
+					assert state().name == cmd.name; // this must hold as name is the identifier for this entity!
+					ctx.reply(new GameProposed(state().name));
+					return ctx.done();
+				}
+			}
+		);
+		
+		b.setEventHandler(
+			GameProposed.class, evt -> new GameState(evt.name)
 		);
 		
 		return b.build();
