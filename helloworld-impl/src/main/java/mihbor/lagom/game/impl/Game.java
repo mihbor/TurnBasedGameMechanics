@@ -8,8 +8,9 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 
 	@Override
 	public PersistentEntity<GameCommand, GameEvent, GameState>.Behavior initialBehavior(Optional<GameState> snapshot) {
-		// TODO Auto-generated method stub
-		return null;
+		BehaviorBuilder b = newBehaviorBuilder(snapshot.orElse(GameState.EMPTY));
+		
+		return b.build();
 	}
 
 }
