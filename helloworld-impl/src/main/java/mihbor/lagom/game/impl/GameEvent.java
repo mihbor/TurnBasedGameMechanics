@@ -3,10 +3,10 @@ package mihbor.lagom.game.impl;
 public interface GameEvent {
 	public final class GameProposed implements GameEvent {
 
-		String name;
+		String id;
 		
-		public GameProposed(String name) {
-			this.name = name;
+		public GameProposed(String id) {
+			this.id = id;
 		}
 	}
 	public final class PlayerJoinedGame implements GameEvent {}
