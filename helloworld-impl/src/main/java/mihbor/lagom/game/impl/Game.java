@@ -30,7 +30,7 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		);
 		
 		b.setEventHandler(
-			GameProposed.class, evt -> state().propose(evt.gameId)
+			GameProposed.class, evt -> state().gameProposed(evt.gameId)
 		);
 		
 		b.setCommandHandler(
@@ -50,7 +50,7 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		
 		b.setEventHandler(
 			PlayerJoinedGame.class,
-			evt -> state().addPlayer(evt.playerId)
+			evt -> state().playerJoinedGame(evt.playerId)
 		);
 		
 		return b.build();

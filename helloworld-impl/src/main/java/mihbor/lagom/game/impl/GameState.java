@@ -14,11 +14,11 @@ public class GameState {
 		this.playerIds = playerIds;
 	}
 	
-	public GameState propose(String id) {
+	public GameState gameProposed(String id) {
 		return new GameState(id, playerIds);
 	}
 	
-	public GameState addPlayer(String playerId){
+	public GameState playerJoinedGame(String playerId){
 		LinkedHashSet<String> newPlayerIds = !playerIds.isEmpty() ? new LinkedHashSet<>(playerIds) : new LinkedHashSet<>();
 		newPlayerIds.add(playerId);
 		return new GameState(id, newPlayerIds);
