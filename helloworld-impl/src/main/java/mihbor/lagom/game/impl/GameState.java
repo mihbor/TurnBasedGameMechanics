@@ -19,7 +19,7 @@ public class GameState {
 	}
 	
 	public GameState addPlayer(String playerId){
-		LinkedHashSet<String> newPlayerIds = !playerIds.isEmpty() ? new LinkedHashSet(playerIds) : new LinkedHashSet();
+		LinkedHashSet<String> newPlayerIds = !playerIds.isEmpty() ? new LinkedHashSet<>(playerIds) : new LinkedHashSet<>();
 		newPlayerIds.add(playerId);
 		return new GameState(id, newPlayerIds);
 	}
