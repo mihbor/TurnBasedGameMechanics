@@ -1,7 +1,9 @@
 package mihbor.lagom.game.impl;
 
 import java.util.Optional;
+import java.util.ArrayList;
 
+import com.google.gdata.util.common.base.Preconditions;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntity;
 
 import mihbor.lagom.game.impl.GameCommand.JoinGame;
@@ -10,6 +12,7 @@ import mihbor.lagom.game.impl.GameCommand.StartGame;
 import mihbor.lagom.game.impl.GameEvent.GameProposed;
 import mihbor.lagom.game.impl.GameEvent.GameStarted;
 import mihbor.lagom.game.impl.GameEvent.PlayerJoinedGame;
+import mihbor.lagom.game.impl.GameEvent.PlayersTurnBegun;
 
 public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 
@@ -46,12 +49,11 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		b.setCommandHandler(
 			JoinGame.class, 
 			(cmd, ctx) -> {
-				PlayerJoinedGame playerJoined = new PlayerJoinedGame(cmd.gameId, cmd.playerId);
+				PlayerJoinedGame playerJoined = new PlayerJoinedGame(state().gameId, cmd.playerId);
 				// idempotency again
 				if(!state().playerIds.contains(cmd.playerId)) {
 					return ctx.thenPersist(playerJoined, evt -> ctx.reply(evt));
 				} else {
-					assert state().gameId == cmd.gameId;
 					ctx.reply(playerJoined);
 					return ctx.done();
 				}
@@ -66,9 +68,21 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		b.setCommandHandler(
 			StartGame.class, 
 			(cmd, ctx) -> {
-				GameStarted gameStarted = new GameStarted(cmd.gameId);
-				if(!state().isStarted){
-					return ctx.thenPersist(gameStarted, evt -> ctx.reply(evt));
+				Preconditions.checkState(state().playerCount() < 1, "can't start game without at least one player");
+				GameStarted gameStarted = new GameStarted(state().gameId);
+				if(!state().isStarted) {
+					PlayersTurnBegun playersTurnBegun = new PlayersTurnBegun(
+						state().gameId,
+						state().playerIds.iterator().next(),
+						0L
+					);
+					return ctx.thenPersistAll(
+						new ArrayList<GameEvent>() {{ 
+							add(gameStarted); 
+							add(playersTurnBegun);
+						}},
+						() -> ctx.reply(gameStarted)
+					);
 				} else {
 					ctx.reply(gameStarted);
 					return ctx.done();
@@ -77,6 +91,7 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		);
 		
 		b.setEventHandler(GameStarted.class, evt -> state().gameStarted());
+		b.setEventHandler(PlayersTurnBegun.class, evt -> state().playersTurnBegun(evt.playerId, evt.turn));
 	}
 
 }

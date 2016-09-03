@@ -25,7 +25,17 @@ public interface GameEvent {
 		}
 	}
 	public final class PlayerOrderSet implements GameEvent {}
-	public final class PlayersTurnBegun implements GameEvent {}
+	public final class PlayersTurnBegun implements GameEvent {
+		String gameId;
+		String playerId;
+		long turn;
+
+		public PlayersTurnBegun(String gameId, String playerId, long turn) {
+			this.gameId = gameId;
+			this.playerId = playerId;
+			this.turn = turn;
+		}
+	}
 	public final class PlayersTurnEnded implements GameEvent {}
 	public final class ActionTaken implements GameEvent {}
 	public final class GameFinished implements GameEvent {}
