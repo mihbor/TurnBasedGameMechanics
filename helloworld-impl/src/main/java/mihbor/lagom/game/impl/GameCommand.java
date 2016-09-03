@@ -13,7 +13,9 @@ public interface GameCommand {
 		String gameId;
 		String playerId;
 	}
-	public final class StartGame implements GameCommand, PersistentEntity.ReplyType<GameStarted> {}
+	public final class StartGame implements GameCommand, PersistentEntity.ReplyType<GameStarted> {
+		String gameId;
+	}
 	public final class SetPlayerOrder implements GameCommand, PersistentEntity.ReplyType<PlayerOrderSet> {}
 	public final class TakeAction implements GameCommand, PersistentEntity.ReplyType<ActionTaken> {}
 	public final class EndTurn implements GameCommand, PersistentEntity.ReplyType<PlayersTurnEnded> {}

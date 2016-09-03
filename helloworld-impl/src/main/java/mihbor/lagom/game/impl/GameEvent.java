@@ -17,7 +17,13 @@ public interface GameEvent {
 			this.playerId = playerId;
 		}
 	}
-	public final class GameStarted implements GameEvent {}
+	public final class GameStarted implements GameEvent {
+		String gameId;
+		
+		public GameStarted(String gameId) {
+			this.gameId = gameId;
+		}
+	}
 	public final class PlayerOrderSet implements GameEvent {}
 	public final class PlayersTurnBegun implements GameEvent {}
 	public final class PlayersTurnEnded implements GameEvent {}
