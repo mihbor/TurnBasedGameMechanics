@@ -16,6 +16,13 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 	@Override
 	public PersistentEntity<GameCommand, GameEvent, GameState>.Behavior initialBehavior(Optional<GameState> snapshot) {
 		BehaviorBuilder b = newBehaviorBuilder(snapshot.orElse(GameState.EMPTY));
+		proposeGameBehavior(b);
+		joinGameBehavior(b);
+		startGameBehavior(b);
+		return b.build();
+	}
+
+	private void proposeGameBehavior(PersistentEntity<GameCommand, GameEvent, GameState>.BehaviorBuilder b) {
 
 		b.setCommandHandler(
 			ProposeGame.class, 
@@ -32,7 +39,9 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		);
 		
 		b.setEventHandler(GameProposed.class, evt -> state().gameProposed(evt.gameId));
-		
+	}
+
+	private void joinGameBehavior(PersistentEntity<GameCommand, GameEvent, GameState>.BehaviorBuilder b) {
 		
 		b.setCommandHandler(
 			JoinGame.class, 
@@ -50,6 +59,9 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		);
 		
 		b.setEventHandler(PlayerJoinedGame.class, evt -> state().playerJoinedGame(evt.playerId));
+	}
+	
+	private void startGameBehavior(PersistentEntity<GameCommand, GameEvent, GameState>.BehaviorBuilder b) {
 		
 		b.setCommandHandler(
 			StartGame.class, 
@@ -65,8 +77,6 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		);
 		
 		b.setEventHandler(GameStarted.class, evt -> state().gameStarted());
-		
-		return b.build();
 	}
 
 }
