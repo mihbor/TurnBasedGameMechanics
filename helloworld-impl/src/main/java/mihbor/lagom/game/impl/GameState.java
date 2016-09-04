@@ -100,7 +100,9 @@ public class GameState {
 
 	public GameState playersTurnBegun(String playerId, long turn) {
 		Preconditions.checkState(getPlayerCount() > 0, "not players joined yet");
-		if (this.turn !=null && this.turn == turn) return this; // idempotency, this will also happen on 0th turn
+		if (this.turn != null && this.turn == turn
+			&& currentPlayersIndex != null && getPlayersIndex(playerId) == currentPlayersIndex
+		) return this; // idempotency, this will also happen on 0th turn
 		else return new GameState(gameId, playerIds, isStarted, turn, getPlayersIndex(playerId), previousTurnsPlayerId); // normal case
 	}
 

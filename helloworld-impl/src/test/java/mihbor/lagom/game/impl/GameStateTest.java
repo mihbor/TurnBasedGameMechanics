@@ -187,9 +187,34 @@ public class GameStateTest {
 			assertEquals(newState, newerState);
 	}
 
-	@Ignore
+	@Test
 	public void testPlayersTurnBegun() {
-		fail("Not yet implemented");
+		//Given
+			GameState state = GameState.EMPTY
+				.gameProposed("abc")
+				.playerJoinedGame("Alice")
+				.playerJoinedGame("Bob")
+				.gameStarted();
+			assertNull(state.turn);
+			assertNull(state.currentPlayersIndex);
+		//When
+			GameState newState = state.playersTurnBegun("Alice", 0);
+		//Then
+			assertNotEquals(state, newState);
+			assertEquals(0L, newState.turn.longValue());
+			assertEquals(0, newState.currentPlayersIndex.intValue());
+			
+		//When
+			GameState newerState = newState.playersTurnBegun("Bob", 1);
+		//Then
+			assertNotEquals(newState, newerState);
+			assertEquals(1L, newerState.turn.longValue());
+			assertEquals(1, newerState.currentPlayersIndex.intValue());
+			
+		//When (idempotent)
+			GameState newestState = newerState.playersTurnBegun("Bob", 1);
+		//Then
+			assertEquals(newerState, newestState);
 	}
 
 	@Ignore
