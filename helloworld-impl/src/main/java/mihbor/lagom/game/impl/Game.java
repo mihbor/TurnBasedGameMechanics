@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.google.gdata.util.common.base.Preconditions;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntity;
 
+import mihbor.lagom.game.impl.GameCommand.EndTurn;
 import mihbor.lagom.game.impl.GameCommand.JoinGame;
 import mihbor.lagom.game.impl.GameCommand.ProposeGame;
 import mihbor.lagom.game.impl.GameCommand.StartGame;
@@ -13,6 +14,7 @@ import mihbor.lagom.game.impl.GameEvent.GameProposed;
 import mihbor.lagom.game.impl.GameEvent.GameStarted;
 import mihbor.lagom.game.impl.GameEvent.PlayerJoinedGame;
 import mihbor.lagom.game.impl.GameEvent.PlayersTurnBegun;
+import mihbor.lagom.game.impl.GameEvent.PlayersTurnEnded;
 
 public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 
@@ -22,6 +24,7 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		proposeGameBehavior(b);
 		joinGameBehavior(b);
 		startGameBehavior(b);
+		endTurnBehavior(b);
 		return b.build();
 	}
 
@@ -51,7 +54,7 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 			(cmd, ctx) -> {
 				PlayerJoinedGame playerJoined = new PlayerJoinedGame(state().gameId, cmd.playerId);
 				// idempotency again
-				if(!state().playerIds.contains(cmd.playerId)) {
+				if(!state().hasPlayer(cmd.playerId)) {
 					return ctx.thenPersist(playerJoined, evt -> ctx.reply(evt));
 				} else {
 					ctx.reply(playerJoined);
@@ -68,12 +71,12 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		b.setCommandHandler(
 			StartGame.class, 
 			(cmd, ctx) -> {
-				Preconditions.checkState(state().playerCount() < 1, "can't start game without at least one player");
+				Preconditions.checkState(state().getPlayerCount() > 0, "can't start game without at least one player");
 				GameStarted gameStarted = new GameStarted(state().gameId);
 				if(!state().isStarted) {
 					PlayersTurnBegun playersTurnBegun = new PlayersTurnBegun(
 						state().gameId,
-						state().playerIds.iterator().next(),
+						state().getNextTurnsPlayersId(),
 						0L
 					);
 					return ctx.thenPersistAll(
@@ -92,6 +95,24 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		
 		b.setEventHandler(GameStarted.class, evt -> state().gameStarted());
 		b.setEventHandler(PlayersTurnBegun.class, evt -> state().playersTurnBegun(evt.playerId, evt.turn));
+	}
+
+	private void endTurnBehavior(PersistentEntity<GameCommand, GameEvent, GameState>.BehaviorBuilder b) {
+		
+		b.setCommandHandler(
+			EndTurn.class,
+			(cmd, ctx) -> {
+				if(cmd.turn == state().turn) {
+					PlayersTurnEnded playersTurnEnded = new PlayersTurnEnded(state().gameId, cmd.playerId, state().turn);
+					return ctx.thenPersist(playersTurnEnded, evt -> ctx.reply(evt));
+				} else {
+					ctx.invalidCommand("not your turn to end");
+					return ctx.done();
+				}
+			}
+		);
+		
+		b.setEventHandler(PlayersTurnEnded.class, evt -> state().playersTurnEnded());
 	}
 
 }

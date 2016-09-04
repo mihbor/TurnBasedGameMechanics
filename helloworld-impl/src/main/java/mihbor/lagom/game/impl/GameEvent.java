@@ -36,7 +36,17 @@ public interface GameEvent {
 			this.turn = turn;
 		}
 	}
-	public final class PlayersTurnEnded implements GameEvent {}
+	public final class PlayersTurnEnded implements GameEvent {
+		String gameId;
+		String playerId;
+		long turn;
+
+		public PlayersTurnEnded(String gameId, String playerId, long turn) {
+			this.gameId = gameId;
+			this.playerId = playerId;
+			this.turn = turn;
+		}
+	}
 	public final class ActionTaken implements GameEvent {}
 	public final class GameFinished implements GameEvent {}
 
