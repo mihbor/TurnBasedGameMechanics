@@ -1,5 +1,7 @@
 package mihbor.lagom.game.impl;
 
+import static mihbor.lagom.game.impl.GameState.EMPTY;
+
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -11,7 +13,7 @@ public class GameStateTest {
 	public void testGetPlayerCount() {
 		assertTrue(
 			//Given
-				GameState.EMPTY.gameProposed("1")
+				EMPTY.gameProposed("1")
 			//When
 				.playerJoinedGame("A")
 				.playerJoinedGame("B")
@@ -23,7 +25,7 @@ public class GameStateTest {
 	@Test
 	public void testHasPlayer() {
 		//Given
-			GameState state = GameState.EMPTY.gameProposed("1");
+			GameState state = EMPTY.gameProposed("1");
 		//When
 			state = state
 			.playerJoinedGame("A")
@@ -45,7 +47,7 @@ public class GameStateTest {
 	@Test
 	public void testGetPreviousTurnsPlayerId() {
 		//Given
-			GameState state = GameState.EMPTY.gameProposed("1")
+			GameState state = EMPTY.gameProposed("1")
 				.playerJoinedGame("A")
 				.playerJoinedGame("B")
 				.gameStarted();
@@ -77,7 +79,7 @@ public class GameStateTest {
 	@Test
 	public void testGetCurrentTurnsPlayersId() {
 		//Given
-			GameState state = GameState.EMPTY.gameProposed("1")
+			GameState state = EMPTY.gameProposed("1")
 				.playerJoinedGame("A")
 				.playerJoinedGame("B")
 				.gameStarted();
@@ -103,7 +105,7 @@ public class GameStateTest {
 	@Test
 	public void testGetNextTurnsPlayersId() {
 		//Given
-			GameState state = GameState.EMPTY.gameProposed("1")
+			GameState state = EMPTY.gameProposed("1")
 		//When
 			.playerJoinedGame("A");
 		//Then
@@ -117,6 +119,7 @@ public class GameStateTest {
 		//When
 			state = state
 			.gameStarted()
+			//don't test in between these at it's irrelevant
 			.playersTurnBegun("A", 0);
 		//Then
 			assertEquals("B", state.getNextTurnsPlayersId());
@@ -124,6 +127,7 @@ public class GameStateTest {
 		//When
 			state = state
 			.playersTurnEnded("A")
+			//don't test in between these at it's irrelevant
 			.playersTurnBegun("B", 1);
 		//Then (still)
 			assertEquals("A", state.getNextTurnsPlayersId());
@@ -131,7 +135,14 @@ public class GameStateTest {
 
 	@Test
 	public void testGameProposed() {
-		fail("Not yet implemented");
+		assertNull(EMPTY.gameId);
+		GameState state = GameState.EMPTY.gameProposed("123");
+		assertNotEquals(EMPTY, state);
+		assertEquals("123", state.gameId);
+		try{
+			state.gameProposed("abc");
+			fail("gameProposed should not be possible on a non-empty game");
+		} catch (Throwable t) {/*correct*/}
 	}
 
 	@Test
