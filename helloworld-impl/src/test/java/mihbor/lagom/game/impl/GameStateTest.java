@@ -201,14 +201,14 @@ public class GameStateTest {
 			GameState newState = state.playersTurnBegun("Alice", 0);
 		//Then
 			assertNotEquals(state, newState);
-			assertEquals(0L, newState.turn.longValue());
+			assertEquals(0, newState.turn.longValue());
 			assertEquals(0, newState.currentPlayersIndex.intValue());
 			
 		//When
 			GameState newerState = newState.playersTurnBegun("Bob", 1);
 		//Then
 			assertNotEquals(newState, newerState);
-			assertEquals(1L, newerState.turn.longValue());
+			assertEquals(1, newerState.turn.longValue());
 			assertEquals(1, newerState.currentPlayersIndex.intValue());
 			
 		//When (idempotent)
@@ -217,9 +217,34 @@ public class GameStateTest {
 			assertEquals(newerState, newestState);
 	}
 
-	@Ignore
+	@Test
 	public void testPlayersTurnEnded() {
-		fail("Not yet implemented");
+		//Given
+		GameState state = GameState.EMPTY
+			.gameProposed("abc")
+			.playerJoinedGame("Alice")
+			.playerJoinedGame("Bob")
+			.gameStarted()
+			.playersTurnBegun("Alice", 0);
+			assertNull(state.previousTurnsPlayerId);
+		//When
+			GameState newState = state.playersTurnEnded("Alice");
+		//Then
+			assertNotEquals(state, newState);
+			assertNull(newState.currentPlayersIndex);
+			assertEquals("Alice", newState.previousTurnsPlayerId);
+
+		//When
+			GameState newerState = newState.playersTurnEnded("Bob");
+		//Then
+			assertNotEquals(newState, newerState);
+			assertNull(newerState.currentPlayersIndex);
+			assertEquals("Bob", newerState.previousTurnsPlayerId);
+
+		//When (idempotent)
+			GameState newestState = newerState.playersTurnEnded("Bob");
+		//Then
+			assertEquals(newerState, newestState);
 	}
 
 }

@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 public class GameState {
 	/* immutable fields */
 	final String gameId;
-	protected final LinkedHashSet<String> playerIds;
+	final protected LinkedHashSet<String> playerIds;
 	final boolean isStarted;
 	final Long turn;
 	final Integer currentPlayersIndex;
@@ -71,7 +71,7 @@ public class GameState {
 		Preconditions.checkArgument(hasPlayer(playerId), "this player hasn't joined");
 		int i = 0;
 		for(String id : playerIds) {
-			if (id.equals(playerId)) return i;
+			if(id.equals(playerId)) return i;
 			else i++;
 		}
 		throw new AssertionError("hasPlayer == true but not found");
@@ -83,7 +83,7 @@ public class GameState {
 	}
 	
 	public GameState playerJoinedGame(String playerId) {
-		if (playerIds.contains(playerId)) return this; // idempotency
+		if(playerIds.contains(playerId)) return this; // idempotency
 		else { // normal case
 			LinkedHashSet<String> newPlayerIds = !playerIds.isEmpty()
 				? new LinkedHashSet<>(playerIds)
@@ -94,20 +94,22 @@ public class GameState {
 	}
 	
 	public GameState gameStarted() {
-		if (isStarted) return this; // idempotency
+		if(isStarted) return this; // idempotency
 		else return new GameState(gameId, playerIds, true, turn, currentPlayersIndex, previousTurnsPlayerId); // normal case
 	}
 
 	public GameState playersTurnBegun(String playerId, long turn) {
 		Preconditions.checkState(getPlayerCount() > 0, "not players joined yet");
-		if (this.turn != null && this.turn == turn
+		if(this.turn != null && this.turn == turn
 			&& currentPlayersIndex != null && getPlayersIndex(playerId) == currentPlayersIndex
 		) return this; // idempotency, this will also happen on 0th turn
 		else return new GameState(gameId, playerIds, isStarted, turn, getPlayersIndex(playerId), previousTurnsPlayerId); // normal case
 	}
 
 	public GameState playersTurnEnded(String playerId) {
-		return new GameState(gameId, playerIds, isStarted, turn, null, playerId);
+		Preconditions.checkNotNull(playerId);
+		if(playerId.equals(previousTurnsPlayerId)) return this; //idempotency
+		else return new GameState(gameId, playerIds, isStarted, turn, null, playerId);
 	}
 
 }
