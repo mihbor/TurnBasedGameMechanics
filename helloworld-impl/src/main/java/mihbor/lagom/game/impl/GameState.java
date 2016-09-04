@@ -11,20 +11,29 @@ public class GameState {
 	final boolean isStarted;
 	final Long turn;
 	final Integer currentPlayersIndex;
+	final String previousTurnsPlayerId;
 	
-	public final static GameState EMPTY = new GameState(null, new LinkedHashSet<String>(), false, null, null){
+	public final static GameState EMPTY = new GameState(null, new LinkedHashSet<String>(), false, null, null, null){
 		@Override
 		public GameState gameProposed(String id) {
-			return new GameState(id, playerIds, isStarted, turn, currentPlayersIndex);
+			return new GameState(id, playerIds, isStarted, turn, currentPlayersIndex, previousTurnsPlayerId);
 		}
 	};
 
-	private GameState(String gameId, LinkedHashSet<String> playerIds, boolean isStarted, Long turn, Integer currentPlayersIndex) {
+	private GameState(
+		String gameId, 
+		LinkedHashSet<String> playerIds, 
+		boolean isStarted, 
+		Long turn, 
+		Integer currentPlayersIndex, 
+		String previousTurnsPlayerId
+	) {
 		this.gameId = gameId;
 		this.playerIds = playerIds;
 		this.isStarted = isStarted;
 		this.turn = turn;
 		this.currentPlayersIndex = currentPlayersIndex;
+		this.previousTurnsPlayerId = previousTurnsPlayerId;
 	}
 	
 	public int getPlayerCount() {
@@ -35,6 +44,10 @@ public class GameState {
 		if (playerIds == null) return false;
 		else return playerIds.contains(playerId);
 	}
+
+	public String getPreviousTurnsPlayerId() {
+		return previousTurnsPlayerId;
+	}
 	
 	public String getCurrentTurnsPlayersId() {
 		Preconditions.checkState(getPlayerCount() > 0, "not players joined yet");
@@ -44,7 +57,7 @@ public class GameState {
 
 	public String getNextTurnsPlayersId() {
 		Preconditions.checkState(getPlayerCount() > 0, "not players joined yet");
-		if(turn == null || (currentPlayersIndex+1) == getPlayerCount()) return playerIds.iterator().next();
+		if(currentPlayersIndex == null || (currentPlayersIndex+1) == getPlayerCount()) return playerIds.iterator().next();
 		else return playerIds.stream().skip(currentPlayersIndex+1).findFirst().get();
 	}
 
@@ -60,7 +73,7 @@ public class GameState {
 	
 	/** Only the EMPTY singleton provides implementation for this */
 	public GameState gameProposed(String id) {
-		throw new IllegalStateException("only call propose game on the EMPTY singleton");
+		throw new IllegalStateException("only call this on the EMPTY singleton");
 	}
 	
 	public GameState playerJoinedGame(String playerId) {
@@ -70,22 +83,23 @@ public class GameState {
 				? new LinkedHashSet<>(playerIds)
 				: new LinkedHashSet<>();
 			newPlayerIds.add(playerId);
-			return new GameState(gameId, newPlayerIds, isStarted, turn, currentPlayersIndex);
+			return new GameState(gameId, newPlayerIds, isStarted, turn, currentPlayersIndex, previousTurnsPlayerId);
 		}
 	}
 	
 	public GameState gameStarted() {
 		if (isStarted) return this; // idempotency
-		else return new GameState(gameId, playerIds, true, turn, currentPlayersIndex); // normal case
+		else return new GameState(gameId, playerIds, true, turn, currentPlayersIndex, previousTurnsPlayerId); // normal case
 	}
 
 	public GameState playersTurnBegun(String playerId, long turn) {
 		Preconditions.checkState(getPlayerCount() > 0, "not players joined yet");
 		if (this.turn == turn) return this; // idempotency, this will also happen on 0th turn
-		else return new GameState(gameId, playerIds, isStarted, turn, getPlayersIndex(playerId)); // normal case
+		else return new GameState(gameId, playerIds, isStarted, turn, getPlayersIndex(playerId), previousTurnsPlayerId); // normal case
 	}
 
-	public GameState playersTurnEnded() {
-		return this;
+	public GameState playersTurnEnded(String playerId) {
+		return new GameState(gameId, playerIds, isStarted, turn, null, playerId);
 	}
+
 }
