@@ -168,9 +168,23 @@ public class GameStateTest {
 			assertEquals(2, newerState.getPlayerCount());
 	}
 
-	@Ignore
+	@Test
 	public void testGameStarted() {
-		fail("Not yet implemented");
+		//Given
+			GameState state = GameState.EMPTY
+				.gameProposed("abc")
+				.playerJoinedGame("Alice");
+			assertFalse(state.isStarted);
+		//When
+			GameState newState = state.gameStarted();
+		//Then
+			assertNotEquals(state, newState);
+			assertTrue(newState.isStarted);
+			
+		//When (idempotent)
+			GameState newerState = newState.gameStarted();
+		//Then
+			assertEquals(newState, newerState);
 	}
 
 	@Ignore
