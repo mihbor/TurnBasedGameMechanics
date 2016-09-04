@@ -24,7 +24,9 @@ public interface GameEvent {
 			this.gameId = gameId;
 		}
 	}
-	public final class PlayerOrderSet implements GameEvent {}
+	public final class PlayerOrderSet implements GameEvent {
+		/* out of scope for now */
+	}
 	public final class PlayersTurnBegun implements GameEvent {
 		String gameId;
 		String playerId;
@@ -47,7 +49,11 @@ public interface GameEvent {
 			this.turn = turn;
 		}
 	}
-	public final class ActionTaken implements GameEvent {}
-	public final class GameFinished implements GameEvent {}
+	public final class ActionTaken implements GameEvent {
+		/* out of scope for now */
+	}
+	public final class GameFinished implements GameEvent {
+		/* out of scope for now */
+	}
 
 }

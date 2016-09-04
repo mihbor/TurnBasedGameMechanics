@@ -13,8 +13,12 @@ public interface GameCommand {
 		String playerId;
 	}
 	public final class StartGame implements GameCommand, PersistentEntity.ReplyType<GameStarted> {}
-	public final class SetPlayerOrder implements GameCommand, PersistentEntity.ReplyType<PlayerOrderSet> {}
-	public final class TakeAction implements GameCommand, PersistentEntity.ReplyType<ActionTaken> {}
+	public final class SetPlayerOrder implements GameCommand, PersistentEntity.ReplyType<PlayerOrderSet> {
+		/* out of scope for now */
+	}
+	public final class TakeAction implements GameCommand, PersistentEntity.ReplyType<ActionTaken> {
+		/* out of scope for now */
+	}
 	public final class EndTurn implements GameCommand, PersistentEntity.ReplyType<PlayersTurnEnded> {
 		String playerId;
 		long turn;

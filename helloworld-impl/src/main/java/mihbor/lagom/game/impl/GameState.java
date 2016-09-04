@@ -1,20 +1,23 @@
 package mihbor.lagom.game.impl;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.LinkedHashSet;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.base.Preconditions;
 
 public class GameState {
-	public final static GameState EMPTY = new GameState(null, new LinkedHashSet<String>(), false, null, null);
-	
-	/* never mutate fields! */
+	/* immutable fields */
 	final String gameId;
-	private final LinkedHashSet<String> playerIds;
+	protected final LinkedHashSet<String> playerIds;
 	final boolean isStarted;
 	final Long turn;
 	final Integer currentPlayersIndex;
+	
+	public final static GameState EMPTY = new GameState(null, new LinkedHashSet<String>(), false, null, null){
+		@Override
+		public GameState gameProposed(String id) {
+			return new GameState(id, playerIds, isStarted, turn, currentPlayersIndex);
+		}
+	};
 
 	private GameState(String gameId, LinkedHashSet<String> playerIds, boolean isStarted, Long turn, Integer currentPlayersIndex) {
 		this.gameId = gameId;
@@ -23,7 +26,7 @@ public class GameState {
 		this.turn = turn;
 		this.currentPlayersIndex = currentPlayersIndex;
 	}
-
+	
 	public int getPlayerCount() {
 		return playerIds != null ? playerIds.size() : 0;
 	}
@@ -44,10 +47,20 @@ public class GameState {
 		if(turn == null || (currentPlayersIndex+1) == getPlayerCount()) return playerIds.iterator().next();
 		else return playerIds.stream().skip(currentPlayersIndex+1).findFirst().get();
 	}
+
+	private int getPlayersIndex(String playerId) {
+		Preconditions.checkArgument(hasPlayer(playerId), "this player hasn't joined");
+		int i = 0;
+		for(String id : playerIds) {
+			if (id.equals(playerId)) return i;
+			else i++;
+		}
+		throw new AssertionError("hasPlayer == true but not found");
+	}
 	
+	/** Only the EMPTY singleton provides implementation for this */
 	public GameState gameProposed(String id) {
-		Preconditions.checkState(this==EMPTY, "only call propose game on the EMPTY singleton");
-		return new GameState(id, playerIds, isStarted, turn, currentPlayersIndex);
+		throw new IllegalStateException("only call propose game on the EMPTY singleton");
 	}
 	
 	public GameState playerJoinedGame(String playerId) {
@@ -70,16 +83,6 @@ public class GameState {
 		Preconditions.checkState(getPlayerCount() > 0, "not players joined yet");
 		if (this.turn == turn) return this; // idempotency, this will also happen on 0th turn
 		else return new GameState(gameId, playerIds, isStarted, turn, getPlayersIndex(playerId)); // normal case
-	}
-
-	private int getPlayersIndex(String playerId) {
-		Preconditions.checkArgument(hasPlayer(playerId), "this player hasn't joined");
-		int i = 0;
-		for(String id : playerIds) {
-			if (id.equals(playerId)) return i;
-			else i++;
-		}
-		throw new AssertionError("hasPlayer == true but not found");
 	}
 
 	public GameState playersTurnEnded() {

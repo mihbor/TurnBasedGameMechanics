@@ -6,15 +6,8 @@ import java.util.ArrayList;
 import com.google.gdata.util.common.base.Preconditions;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntity;
 
-import mihbor.lagom.game.impl.GameCommand.EndTurn;
-import mihbor.lagom.game.impl.GameCommand.JoinGame;
-import mihbor.lagom.game.impl.GameCommand.ProposeGame;
-import mihbor.lagom.game.impl.GameCommand.StartGame;
-import mihbor.lagom.game.impl.GameEvent.GameProposed;
-import mihbor.lagom.game.impl.GameEvent.GameStarted;
-import mihbor.lagom.game.impl.GameEvent.PlayerJoinedGame;
-import mihbor.lagom.game.impl.GameEvent.PlayersTurnBegun;
-import mihbor.lagom.game.impl.GameEvent.PlayersTurnEnded;
+import mihbor.lagom.game.impl.GameCommand.*;
+import mihbor.lagom.game.impl.GameEvent.*;
 
 public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 
@@ -34,7 +27,7 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 			ProposeGame.class, 
 			(cmd, ctx) -> {
 				GameProposed gameProposed = new GameProposed(cmd.gameId);
-				if(state().gameId == null) {
+				if(state() == GameState.EMPTY) {
 					return ctx.thenPersist(gameProposed, evt -> ctx.reply(evt));
 				} else { // already proposed, we're idempotent, so reply GameProposed
 					assert state().gameId == cmd.gameId; // this must hold as this is the identifier for this entity!
