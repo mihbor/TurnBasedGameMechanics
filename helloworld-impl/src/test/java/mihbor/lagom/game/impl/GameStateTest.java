@@ -4,6 +4,7 @@ import static mihbor.lagom.game.impl.GameState.EMPTY;
 
 import static org.junit.Assert.*;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class GameStateTest {
@@ -145,22 +146,22 @@ public class GameStateTest {
 		} catch (Throwable t) {/*correct*/}
 	}
 
-	@Test
+	@Ignore
 	public void testPlayerJoinedGame() {
 		fail("Not yet implemented");
 	}
 
-	@Test
+	@Ignore
 	public void testGameStarted() {
 		fail("Not yet implemented");
 	}
 
-	@Test
+	@Ignore
 	public void testPlayersTurnBegun() {
 		fail("Not yet implemented");
 	}
 
-	@Test
+	@Ignore
 	public void testPlayersTurnEnded() {
 		fail("Not yet implemented");
 	}
