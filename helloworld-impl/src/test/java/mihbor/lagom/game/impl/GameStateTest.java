@@ -146,9 +146,26 @@ public class GameStateTest {
 		} catch (Throwable t) {/*correct*/}
 	}
 
-	@Ignore
+	@Test
 	public void testPlayerJoinedGame() {
-		fail("Not yet implemented");
+		//Given
+			GameState state = GameState.EMPTY.gameProposed("abc");
+		//When
+			GameState newState = state.playerJoinedGame("Alice");
+		//Then
+			assertNotEquals(newState, state);
+			assertEquals(1, newState.getPlayerCount());
+			
+		//When (idempotent)
+			GameState newerState = newState.playerJoinedGame("Alice");
+		//Then
+			assertEquals(newState, newerState);
+
+		//When
+			newerState = newState.playerJoinedGame("Bob");
+		//Then
+			assertNotEquals(newState, newerState);
+			assertEquals(2, newerState.getPlayerCount());
 	}
 
 	@Ignore

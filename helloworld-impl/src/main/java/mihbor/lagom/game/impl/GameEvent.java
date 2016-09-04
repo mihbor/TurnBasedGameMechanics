@@ -1,6 +1,7 @@
 package mihbor.lagom.game.impl;
 
 public interface GameEvent {
+	
 	public final class GameProposed implements GameEvent {
 		String gameId;
 		
@@ -8,6 +9,7 @@ public interface GameEvent {
 			this.gameId = gameId;
 		}
 	}
+	
 	public final class PlayerJoinedGame implements GameEvent {
 		String gameId;
 		String playerId;
@@ -17,6 +19,7 @@ public interface GameEvent {
 			this.playerId = playerId;
 		}
 	}
+	
 	public final class GameStarted implements GameEvent {
 		String gameId;
 		
@@ -24,9 +27,11 @@ public interface GameEvent {
 			this.gameId = gameId;
 		}
 	}
+	
 	public final class PlayerOrderSet implements GameEvent {
 		/* out of scope for now */
 	}
+	
 	public final class PlayersTurnBegun implements GameEvent {
 		String gameId;
 		String playerId;
@@ -38,6 +43,7 @@ public interface GameEvent {
 			this.turn = turn;
 		}
 	}
+	
 	public final class PlayersTurnEnded implements GameEvent {
 		String gameId;
 		String playerId;
@@ -49,9 +55,11 @@ public interface GameEvent {
 			this.turn = turn;
 		}
 	}
+	
 	public final class ActionTaken implements GameEvent {
 		/* out of scope for now */
 	}
+	
 	public final class GameFinished implements GameEvent {
 		/* out of scope for now */
 	}
