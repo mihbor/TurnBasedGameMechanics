@@ -51,14 +51,20 @@ public class GameState {
 	
 	public String getCurrentTurnsPlayersId() {
 		Preconditions.checkState(getPlayerCount() > 0, "not players joined yet");
-		if(turn == null || turn == 0) return playerIds.iterator().next();
+		if(currentPlayersIndex == null) return null;
 		else return playerIds.stream().skip(currentPlayersIndex).findFirst().get();
 	}
 
 	public String getNextTurnsPlayersId() {
 		Preconditions.checkState(getPlayerCount() > 0, "not players joined yet");
-		if(currentPlayersIndex == null || (currentPlayersIndex+1) == getPlayerCount()) return playerIds.iterator().next();
-		else return playerIds.stream().skip(currentPlayersIndex+1).findFirst().get();
+		if(!isStarted) //special case
+			return playerIds.iterator().next();
+		else if(currentPlayersIndex == null) 
+			return null;
+		else if(currentPlayersIndex+1 == getPlayerCount()) 
+			return playerIds.iterator().next(); //cycle back to beginning player
+		else 
+			return playerIds.stream().skip(currentPlayersIndex+1).findFirst().get();
 	}
 
 	private int getPlayersIndex(String playerId) {
@@ -94,7 +100,7 @@ public class GameState {
 
 	public GameState playersTurnBegun(String playerId, long turn) {
 		Preconditions.checkState(getPlayerCount() > 0, "not players joined yet");
-		if (this.turn == turn) return this; // idempotency, this will also happen on 0th turn
+		if (this.turn !=null && this.turn == turn) return this; // idempotency, this will also happen on 0th turn
 		else return new GameState(gameId, playerIds, isStarted, turn, getPlayersIndex(playerId), previousTurnsPlayerId); // normal case
 	}
 
