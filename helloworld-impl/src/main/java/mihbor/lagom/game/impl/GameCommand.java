@@ -8,6 +8,10 @@ public interface GameCommand {
 	
 	public final class ProposeGame implements GameCommand, PersistentEntity.ReplyType<GameProposed> {
 		String gameId;
+		
+		public ProposeGame(String gameId) {
+			this.gameId = gameId;
+		}
 	}
 	public final class JoinGame implements GameCommand, PersistentEntity.ReplyType<PlayerJoinedGame> {
 		String playerId;
