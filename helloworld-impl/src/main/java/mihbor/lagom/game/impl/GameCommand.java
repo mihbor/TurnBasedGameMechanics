@@ -7,7 +7,7 @@ import mihbor.lagom.game.impl.GameEvent.*;
 public interface GameCommand {
 	
 	public final class ProposeGame implements GameCommand, PersistentEntity.ReplyType<GameProposed> {
-		String gameId;
+		final String gameId;
 		
 		public ProposeGame(String gameId) {
 			this.gameId = gameId;
@@ -15,7 +15,7 @@ public interface GameCommand {
 	}
 	
 	public final class JoinGame implements GameCommand, PersistentEntity.ReplyType<PlayerJoinedGame> {
-		String playerId;
+		final String playerId;
 		
 		public JoinGame(String playerId) {
 			this.playerId = playerId;
@@ -33,7 +33,12 @@ public interface GameCommand {
 	}
 	
 	public final class EndTurn implements GameCommand, PersistentEntity.ReplyType<PlayersTurnEnded> {
-		String playerId;
-		long turn;
+		final String playerId;
+		final long turn;
+		
+		public EndTurn(String playerId, long turn) {
+			this.playerId = playerId;
+			this.turn = turn;
+		}
 	}
 }
