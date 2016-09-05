@@ -2,6 +2,7 @@ package mihbor.lagom.game.impl;
 
 import static org.junit.Assert.*;
 
+import com.lightbend.lagom.javadsl.persistence.PersistentEntity.InvalidCommandException;
 import com.lightbend.lagom.javadsl.testkit.PersistentEntityTestDriver;
 import com.lightbend.lagom.javadsl.testkit.PersistentEntityTestDriver.Outcome;
 import org.junit.AfterClass;
@@ -179,7 +180,7 @@ public class GameEntityTest {
 			assertEquals("Alice", ((PlayersTurnBegun) event2).playerId);
 			assertEquals(2, ((PlayersTurnBegun) event2).turn);
 
-		//When
+		//When (idempotent)
 			outcome = driver.run(new EndTurn("Bob", 1));
 		//Then
 			assertEquals(1, outcome.getReplies().size());
@@ -189,5 +190,41 @@ public class GameEntityTest {
 			assertEquals(1, ((PlayersTurnEnded) reply).turn);
 			
 			assertEquals(0, outcome.events().size());
+
+		//When (negative)
+			outcome = driver.run(new EndTurn("Bob", 0));
+		//Then
+			assertEquals(1, outcome.getReplies().size());
+			reply = outcome.getReplies().get(0);
+			assertEquals("not your turn to end", ((InvalidCommandException)reply).getMessage());
+			
+			assertEquals(0, outcome.events().size());
+
+		//When (negative)
+			outcome = driver.run(new EndTurn("Bob", 2));
+		//Then
+			assertEquals(1, outcome.getReplies().size());
+			reply = outcome.getReplies().get(0);
+			assertEquals("not your turn to end", ((InvalidCommandException)reply).getMessage());
+			
+			assertEquals(0, outcome.events().size());
+
+		//When (negative)
+			outcome = driver.run(new EndTurn("Alice", 1));
+		//Then
+			assertEquals(1, outcome.getReplies().size());
+			reply = outcome.getReplies().get(0);
+			assertEquals("not your turn to end", ((InvalidCommandException)reply).getMessage());
+			
+			assertEquals(0, outcome.events().size());
+
+		//When
+			outcome = driver.run(new EndTurn("Alice", 2));
+		//Then
+			assertEquals(1, outcome.getReplies().size());
+			reply = outcome.getReplies().get(0);
+			assertEquals("Alice", ((PlayersTurnEnded) reply).playerId);
+			
+			assertEquals(2, outcome.events().size());
 	}
 }
