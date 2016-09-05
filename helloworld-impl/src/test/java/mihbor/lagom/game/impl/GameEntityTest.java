@@ -2,6 +2,8 @@ package mihbor.lagom.game.impl;
 
 import static org.junit.Assert.*;
 
+import java.util.Collections;
+
 import com.lightbend.lagom.javadsl.persistence.PersistentEntity.InvalidCommandException;
 import com.lightbend.lagom.javadsl.testkit.PersistentEntityTestDriver;
 import com.lightbend.lagom.javadsl.testkit.PersistentEntityTestDriver.Outcome;
@@ -47,7 +49,7 @@ public class GameEntityTest {
 			assertEquals("abc", ((GameProposed) event).gameId);
 			
 			assertEquals("abc", outcome.state().gameId);
-			// assertEquals(Collections.emptyList(), outcome.issues()); there are serializer warnings
+			assertEquals(Collections.emptyList(), outcome.issues());
 	}
 
 	@Test

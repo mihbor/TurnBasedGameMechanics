@@ -1,15 +1,38 @@
 package mihbor.lagom.game.impl;
 
-public interface GameEvent {
-	
+import javax.annotation.concurrent.Immutable;
+
+import com.lightbend.lagom.serialization.Jsonable;
+
+public interface GameEvent extends Jsonable {
+
+	@Immutable
 	public final class GameProposed implements GameEvent {
 		final String gameId;
 		
 		public GameProposed(String gameId) {
 			this.gameId = gameId;
 		}
+
+	    @Override
+	    public boolean equals(Object that) {
+	      if (this == that) return true;
+	      if (that == null) return false;
+	      return that instanceof GameProposed && equalTo((GameProposed) that);
+	    }
+	    private boolean equalTo(GameProposed that) {
+	      return gameId == null && that.gameId == null || gameId.equals(that.gameId);
+	    }
+
+	    @Override
+	    public int hashCode() {
+	      int h = 31;
+	      if(gameId != null) h = h * 17 + gameId.hashCode();
+	      return h;
+	    }
 	}
-	
+
+	@Immutable
 	public final class PlayerJoinedGame implements GameEvent {
 		final String gameId;
 		final String playerId;
@@ -19,7 +42,8 @@ public interface GameEvent {
 			this.playerId = playerId;
 		}
 	}
-	
+
+	@Immutable
 	public final class GameStarted implements GameEvent {
 		final String gameId;
 		
@@ -27,11 +51,13 @@ public interface GameEvent {
 			this.gameId = gameId;
 		}
 	}
-	
+
+	@Immutable
 	public final class PlayerOrderSet implements GameEvent {
 		/* out of scope for now */
 	}
-	
+
+	@Immutable
 	public final class PlayersTurnBegun implements GameEvent {
 		final String gameId;
 		final String playerId;
@@ -43,7 +69,8 @@ public interface GameEvent {
 			this.turn = turn;
 		}
 	}
-	
+
+	@Immutable
 	public final class PlayersTurnEnded implements GameEvent {
 		final String gameId;
 		final String playerId;
@@ -55,11 +82,13 @@ public interface GameEvent {
 			this.turn = turn;
 		}
 	}
-	
+
+	@Immutable
 	public final class ActionTaken implements GameEvent {
 		/* out of scope for now */
 	}
-	
+
+	@Immutable
 	public final class GameFinished implements GameEvent {
 		/* out of scope for now */
 	}

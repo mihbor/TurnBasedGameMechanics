@@ -1,10 +1,16 @@
 package mihbor.lagom.game.impl;
 
+import java.beans.Transient;
 import java.util.LinkedHashSet;
 
-import com.google.common.base.Preconditions;
+import javax.annotation.concurrent.Immutable;
 
-public class GameState {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.google.common.base.Preconditions;
+import com.lightbend.lagom.serialization.CompressedJsonable;
+
+@Immutable
+public class GameState implements CompressedJsonable {
 	/* immutable fields */
 	final String gameId;
 	final protected LinkedHashSet<String> playerIds;
@@ -20,6 +26,7 @@ public class GameState {
 		}
 	};
 
+	@JsonCreator
 	private GameState(
 		String gameId, 
 		LinkedHashSet<String> playerIds, 
@@ -49,14 +56,16 @@ public class GameState {
 		return previousTurnsPlayerId;
 	}
 	
+	@Transient
 	public String getCurrentTurnsPlayersId() {
-		Preconditions.checkState(getPlayerCount() > 0, "not players joined yet");
+		Preconditions.checkState(getPlayerCount() > 0, "no players joined yet");
 		if(currentPlayersIndex == null) return null;
 		else return playerIds.stream().skip(currentPlayersIndex).findFirst().get();
 	}
 
+	@Transient
 	public String getNextTurnsPlayersId() {
-		Preconditions.checkState(getPlayerCount() > 0, "not players joined yet");
+		Preconditions.checkState(getPlayerCount() > 0, "no players joined yet");
 		if(!isStarted) //special case
 			return playerIds.iterator().next();
 		else if(currentPlayersIndex == null) 
@@ -110,6 +119,44 @@ public class GameState {
 		Preconditions.checkNotNull(playerId);
 		if(playerId.equals(previousTurnsPlayerId)) return this; //idempotency
 		else return new GameState(gameId, playerIds, isStarted, turn, null, playerId);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((currentPlayersIndex == null) ? 0 : currentPlayersIndex.hashCode());
+		result = prime * result + ((gameId == null) ? 0 : gameId.hashCode());
+		result = prime * result + (isStarted ? 1231 : 1237);
+		result = prime * result + ((playerIds == null) ? 0 : playerIds.hashCode());
+		result = prime * result + ((previousTurnsPlayerId == null) ? 0 : previousTurnsPlayerId.hashCode());
+		result = prime * result + ((turn == null) ? 0 : turn.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		GameState other = (GameState) obj;
+		if (currentPlayersIndex == null) {
+			if (other.currentPlayersIndex != null) return false;
+		} else if (!currentPlayersIndex.equals(other.currentPlayersIndex)) return false;
+		if (gameId == null) {
+			if (other.gameId != null) return false;
+		} else if (!gameId.equals(other.gameId)) return false;
+		if (isStarted != other.isStarted) return false;
+		if (playerIds == null) {
+			if (other.playerIds != null) return false;
+		} else if (!playerIds.equals(other.playerIds)) return false;
+		if (previousTurnsPlayerId == null) {
+			if (other.previousTurnsPlayerId != null) return false;
+		} else if (!previousTurnsPlayerId.equals(other.previousTurnsPlayerId)) return false;
+		if (turn == null) {
+			if (other.turn != null) return false;
+		} else if (!turn.equals(other.turn)) return false;
+		return true;
 	}
 
 }
