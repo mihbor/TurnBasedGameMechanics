@@ -12,15 +12,21 @@ import akka.NotUsed;
 
 public interface GameService extends Service {
 	
-	abstract ServiceCall<NotUsed, Done> proposeGame(String id);
+	abstract ServiceCall<NotUsed, Done> proposeGame(String gameId);
 	
-	abstract ServiceCall<NotUsed, Done> startGame(String id);
+	abstract ServiceCall<NotUsed, Done> joinGame(String gameId, String playerId);
+	
+	abstract ServiceCall<NotUsed, Done> startGame(String gameId);
+	
+	abstract ServiceCall<NotUsed, Done> endTurn(String gameId, String playerId, long turn);
 
 	@Override
 	default Descriptor descriptor() {
 		return named("helloservice").withCalls(
-			pathCall("/api/proposeGame/:id", this::proposeGame),
-			pathCall("/api/startGame/:id", this::startGame)
+			pathCall("/api/proposeGame/:gameId", this::proposeGame),
+			pathCall("/api/joinGame/:gameId/:playerId", this::joinGame),
+			pathCall("/api/startGame/:gameId", this::startGame),
+			pathCall("/api/endTurn/:gameId/:playerId/:turn", this::endTurn)
 		).withAutoAcl(true);
 	}
 }

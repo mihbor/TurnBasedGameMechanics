@@ -32,6 +32,16 @@ public class GameServiceImpl implements GameService {
 	}
 
 	@Override
+	public ServiceCall<NotUsed, Done> joinGame(String id, String playerId) {
+
+		return request -> {
+    		// Create the game entity for the given ID
+	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
+	    	return ref.ask(new JoinGame(playerId)).thenApply(evt -> Done.getInstance());
+		};
+	}
+
+	@Override
 	public ServiceCall<NotUsed, Done> startGame(String id) {
 
 		return request -> {
@@ -41,5 +51,14 @@ public class GameServiceImpl implements GameService {
 		};
 	}
 
+	@Override
+	public ServiceCall<NotUsed, Done> endTurn(String id, String playerId, long turn) {
+
+		return request -> {
+    		// Create the game entity for the given ID
+	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
+	    	return ref.ask(new EndTurn(playerId, turn)).thenApply(evt -> Done.getInstance());
+		};
+	}
 
 }
