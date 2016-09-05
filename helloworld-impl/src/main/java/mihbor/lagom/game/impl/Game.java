@@ -111,7 +111,7 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 						() -> ctx.reply(playersTurnEnded)
 					);
 				} else if(cmd.turn == state().turn-1 && cmd.playerId.equals(state().getPreviousTurnsPlayerId())) { //idempotency
-					ctx.reply(new PlayersTurnEnded(state().gameId, cmd.playerId, state().turn));
+					ctx.reply(new PlayersTurnEnded(state().gameId, cmd.playerId, cmd.turn));
 					return ctx.done();
 				} else {
 					ctx.invalidCommand("not your turn to end");

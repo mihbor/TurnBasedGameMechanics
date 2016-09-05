@@ -39,12 +39,10 @@ public class GameEntityTest {
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			Object reply = outcome.getReplies().get(0);
-			assertTrue(reply instanceof GameProposed);
 			assertEquals("abc", ((GameProposed) reply).gameId);
 			
 			assertEquals(1, outcome.events().size());
 			Object event = outcome.events().get(0);
-			assertTrue(event instanceof GameProposed);
 			assertEquals("abc", ((GameProposed) event).gameId);
 			
 			assertEquals("abc", outcome.state().gameId);
@@ -62,13 +60,11 @@ public class GameEntityTest {
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			Object reply = outcome.getReplies().get(0);
-			assertTrue(reply instanceof PlayerJoinedGame);
 			assertEquals("abc", ((PlayerJoinedGame) reply).gameId);
 			assertEquals("Alice", ((PlayerJoinedGame) reply).playerId);
 
 			assertEquals(1, outcome.events().size());
 			Object event = outcome.events().get(0);
-			assertTrue(event instanceof PlayerJoinedGame);
 			assertEquals("abc", ((PlayerJoinedGame) event).gameId);
 			assertEquals("Alice", ((PlayerJoinedGame) event).playerId);
 			
@@ -79,13 +75,11 @@ public class GameEntityTest {
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			reply = outcome.getReplies().get(0);
-			assertTrue(reply instanceof PlayerJoinedGame);
 			assertEquals("abc", ((PlayerJoinedGame) reply).gameId);
 			assertEquals("Bob", ((PlayerJoinedGame) reply).playerId);
 			
 			assertEquals(1, outcome.events().size());
 			event = outcome.events().get(0);
-			assertTrue(event instanceof PlayerJoinedGame);
 			assertEquals("abc", ((PlayerJoinedGame) event).gameId);
 			assertEquals("Bob", ((PlayerJoinedGame) event).playerId);
 			
@@ -96,7 +90,6 @@ public class GameEntityTest {
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			reply = outcome.getReplies().get(0);
-			assertTrue(reply instanceof PlayerJoinedGame);
 			assertEquals("abc", ((PlayerJoinedGame) reply).gameId);
 			assertEquals("Bob", ((PlayerJoinedGame) reply).playerId);
 			
@@ -116,17 +109,15 @@ public class GameEntityTest {
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			Object reply = outcome.getReplies().get(0);
-			assertTrue(reply instanceof GameStarted);
 			assertEquals("abc", ((GameStarted) reply).gameId);
 			
 			assertEquals(2, outcome.events().size());
 			Object event1 = outcome.events().get(0);
 			Object event2 = outcome.events().get(1);
-			assertTrue(event1 instanceof GameStarted);
-			assertTrue(event2 instanceof PlayersTurnBegun);
 			assertEquals("abc", ((GameStarted) event1).gameId);
 			assertEquals("abc", ((PlayersTurnBegun) event2).gameId);
 			assertEquals("Alice", ((PlayersTurnBegun) event2).playerId);
+			assertEquals(0, ((PlayersTurnBegun) event2).turn);
 			
 			assertTrue(outcome.state().isStarted);
 
@@ -135,8 +126,67 @@ public class GameEntityTest {
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			reply = outcome.getReplies().get(0);
-			assertTrue(reply instanceof GameStarted);
 			assertEquals("abc", ((GameStarted) reply).gameId);
+			
+			assertEquals(0, outcome.events().size());
+	}
+
+	@Test
+	public void testEndTurn() {
+		//Given
+			PersistentEntityTestDriver<GameCommand, GameEvent, GameState> driver = 
+				new PersistentEntityTestDriver<>(system, new Game(), null);
+			driver.run(new ProposeGame("abc"), new JoinGame("Alice"), new JoinGame("Bob"), new StartGame());
+		//When
+			Outcome<GameEvent, GameState> outcome = driver.run(new EndTurn("Alice", 0));
+		//Then
+			assertEquals(1, outcome.getReplies().size());
+			Object reply = outcome.getReplies().get(0);
+			assertEquals("abc", ((PlayersTurnEnded) reply).gameId);
+			assertEquals("Alice", ((PlayersTurnEnded) reply).playerId);
+			assertEquals(0, ((PlayersTurnEnded) reply).turn);
+			
+			assertEquals(2, outcome.events().size());
+			Object event1 = outcome.events().get(0);
+			Object event2 = outcome.events().get(1);
+			assertTrue(event1 instanceof PlayersTurnEnded);
+			assertTrue(event2 instanceof PlayersTurnBegun);
+			assertEquals("abc", ((PlayersTurnEnded) event1).gameId);
+			assertEquals("Alice", ((PlayersTurnEnded) event1).playerId);
+			assertEquals(0, ((PlayersTurnEnded) event1).turn);
+			assertEquals("abc", ((PlayersTurnBegun) event2).gameId);
+			assertEquals("Bob", ((PlayersTurnBegun) event2).playerId);
+			assertEquals(1, ((PlayersTurnBegun) event2).turn);
+
+		//When
+			outcome = driver.run(new EndTurn("Bob", 1));
+		//Then
+			assertEquals(1, outcome.getReplies().size());
+			reply = outcome.getReplies().get(0);
+			assertEquals("abc", ((PlayersTurnEnded) reply).gameId);
+			assertEquals("Bob", ((PlayersTurnEnded) reply).playerId);
+			assertEquals(1, ((PlayersTurnEnded) reply).turn);
+			
+			assertEquals(2, outcome.events().size());
+			event1 = outcome.events().get(0);
+			event2 = outcome.events().get(1);
+			assertTrue(event1 instanceof PlayersTurnEnded);
+			assertTrue(event2 instanceof PlayersTurnBegun);
+			assertEquals("abc", ((PlayersTurnEnded) event1).gameId);
+			assertEquals("Bob", ((PlayersTurnEnded) event1).playerId);
+			assertEquals(1, ((PlayersTurnEnded) event1).turn);
+			assertEquals("abc", ((PlayersTurnBegun) event2).gameId);
+			assertEquals("Alice", ((PlayersTurnBegun) event2).playerId);
+			assertEquals(2, ((PlayersTurnBegun) event2).turn);
+
+		//When
+			outcome = driver.run(new EndTurn("Bob", 1));
+		//Then
+			assertEquals(1, outcome.getReplies().size());
+			reply = outcome.getReplies().get(0);
+			assertEquals("abc", ((PlayersTurnEnded) reply).gameId);
+			assertEquals("Bob", ((PlayersTurnEnded) reply).playerId);
+			assertEquals(1, ((PlayersTurnEnded) reply).turn);
 			
 			assertEquals(0, outcome.events().size());
 	}
