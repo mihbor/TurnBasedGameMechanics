@@ -14,22 +14,26 @@ public interface GameEvent extends Jsonable {
 			this.gameId = gameId;
 		}
 
-	    @Override
-	    public boolean equals(Object that) {
-	      if (this == that) return true;
-	      if (that == null) return false;
-	      return that instanceof GameProposed && equalTo((GameProposed) that);
-	    }
-	    private boolean equalTo(GameProposed that) {
-	      return gameId == null && that.gameId == null || gameId.equals(that.gameId);
-	    }
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((gameId == null) ? 0 : gameId.hashCode());
+			return result;
+		}
 
-	    @Override
-	    public int hashCode() {
-	      int h = 31;
-	      if(gameId != null) h = h * 17 + gameId.hashCode();
-	      return h;
-	    }
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (getClass() != obj.getClass()) return false;
+			GameProposed other = (GameProposed) obj;
+			if (gameId == null) {
+				if (other.gameId != null) return false;
+			} else if (!gameId.equals(other.gameId)) return false;
+			return true;
+		}
+
 	}
 
 	@Immutable
@@ -41,6 +45,30 @@ public interface GameEvent extends Jsonable {
 			this.gameId = gameId;
 			this.playerId = playerId;
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((gameId == null) ? 0 : gameId.hashCode());
+			result = prime * result + ((playerId == null) ? 0 : playerId.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (getClass() != obj.getClass()) return false;
+			PlayerJoinedGame other = (PlayerJoinedGame) obj;
+			if (gameId == null) {
+				if (other.gameId != null) return false;
+			} else if (!gameId.equals(other.gameId)) return false;
+			if (playerId == null) {
+				if (other.playerId != null) return false;
+			} else if (!playerId.equals(other.playerId)) return false;
+			return true;
+		}
 	}
 
 	@Immutable
@@ -49,6 +77,26 @@ public interface GameEvent extends Jsonable {
 		
 		public GameStarted(String gameId) {
 			this.gameId = gameId;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((gameId == null) ? 0 : gameId.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (getClass() != obj.getClass()) return false;
+			GameStarted other = (GameStarted) obj;
+			if (gameId == null) {
+				if (other.gameId != null) return false;
+			} else if (!gameId.equals(other.gameId)) return false;
+			return true;
 		}
 	}
 
@@ -68,6 +116,32 @@ public interface GameEvent extends Jsonable {
 			this.playerId = playerId;
 			this.turn = turn;
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((gameId == null) ? 0 : gameId.hashCode());
+			result = prime * result + ((playerId == null) ? 0 : playerId.hashCode());
+			result = prime * result + (int) (turn ^ (turn >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (getClass() != obj.getClass()) return false;
+			PlayersTurnBegun other = (PlayersTurnBegun) obj;
+			if (gameId == null) {
+				if (other.gameId != null) return false;
+			} else if (!gameId.equals(other.gameId)) return false;
+			if (playerId == null) {
+				if (other.playerId != null) return false;
+			} else if (!playerId.equals(other.playerId)) return false;
+			if (turn != other.turn) return false;
+			return true;
+		}
 	}
 
 	@Immutable
@@ -80,6 +154,32 @@ public interface GameEvent extends Jsonable {
 			this.gameId = gameId;
 			this.playerId = playerId;
 			this.turn = turn;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((gameId == null) ? 0 : gameId.hashCode());
+			result = prime * result + ((playerId == null) ? 0 : playerId.hashCode());
+			result = prime * result + (int) (turn ^ (turn >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (getClass() != obj.getClass()) return false;
+			PlayersTurnEnded other = (PlayersTurnEnded) obj;
+			if (gameId == null) {
+				if (other.gameId != null) return false;
+			} else if (!gameId.equals(other.gameId)) return false;
+			if (playerId == null) {
+				if (other.playerId != null) return false;
+			} else if (!playerId.equals(other.playerId)) return false;
+			if (turn != other.turn) return false;
+			return true;
 		}
 	}
 

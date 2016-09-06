@@ -18,21 +18,25 @@ public interface GameCommand extends Jsonable {
 		}
 
 		@Override
-		public boolean equals(Object that) {
-			if (this == that) return true;
-			if (that == null) return false;
-			return that instanceof ProposeGame && equalTo((ProposeGame) that);
-		}
-		private boolean equalTo(ProposeGame that) {
-			return gameId == null && that.gameId == null || gameId.equals(that.gameId);
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((gameId == null) ? 0 : gameId.hashCode());
+			return result;
 		}
 
 		@Override
-		public int hashCode() {
-			int h = 31;
-			if (gameId != null) h = h * 17 + gameId.hashCode();
-			return h;
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (getClass() != obj.getClass()) return false;
+			ProposeGame other = (ProposeGame) obj;
+			if (gameId == null) {
+				if (other.gameId != null) return false;
+			} else if (!gameId.equals(other.gameId)) return false;
+			return true;
 		}
+
 	}
 	
 	@Immutable
@@ -42,10 +46,43 @@ public interface GameCommand extends Jsonable {
 		public JoinGame(String playerId) {
 			this.playerId = playerId;
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((playerId == null) ? 0 : playerId.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (getClass() != obj.getClass()) return false;
+			JoinGame other = (JoinGame) obj;
+			if (playerId == null) {
+				if (other.playerId != null) return false;
+			} else if (!playerId.equals(other.playerId)) return false;
+			return true;
+		}
 	}
 	
 	@Immutable
-	public final class StartGame implements GameCommand, PersistentEntity.ReplyType<GameStarted> {}
+	public final class StartGame implements GameCommand, PersistentEntity.ReplyType<GameStarted> {
+
+		@Override
+		public int hashCode() {
+			return 1;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (getClass() != obj.getClass()) return false;
+			return true;
+		}
+	}
 
 	@Immutable
 	public final class SetPlayerOrder implements GameCommand, PersistentEntity.ReplyType<PlayerOrderSet> {
@@ -65,6 +102,28 @@ public interface GameCommand extends Jsonable {
 		public EndTurn(String playerId, long turn) {
 			this.playerId = playerId;
 			this.turn = turn;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((playerId == null) ? 0 : playerId.hashCode());
+			result = prime * result + (int) (turn ^ (turn >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (getClass() != obj.getClass()) return false;
+			EndTurn other = (EndTurn) obj;
+			if (playerId == null) {
+				if (other.playerId != null) return false;
+			} else if (!playerId.equals(other.playerId)) return false;
+			if (turn != other.turn) return false;
+			return true;
 		}
 	}
 }
