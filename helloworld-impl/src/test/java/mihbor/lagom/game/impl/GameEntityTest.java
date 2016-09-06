@@ -49,6 +49,7 @@ public class GameEntityTest {
 			assertEquals("abc", ((GameProposed) event).gameId);
 			
 			assertEquals("abc", outcome.state().gameId);
+			
 			assertEquals(Collections.emptyList(), outcome.issues());
 	}
 
@@ -72,6 +73,8 @@ public class GameEntityTest {
 			assertEquals("Alice", ((PlayerJoinedGame) event).playerId);
 			
 			assertEquals(1, outcome.state().getPlayerCount());
+			
+			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When
 			outcome = driver.run(new JoinGame("Bob"));
@@ -87,6 +90,8 @@ public class GameEntityTest {
 			assertEquals("Bob", ((PlayerJoinedGame) event).playerId);
 			
 			assertEquals(2, outcome.state().getPlayerCount());
+			
+			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When (idempotent)
 			outcome = driver.run(new JoinGame("Bob"));
@@ -99,6 +104,8 @@ public class GameEntityTest {
 			assertEquals(0, outcome.events().size());
 
 			assertEquals(2, outcome.state().getPlayerCount());
+			
+			assertEquals(Collections.emptyList(), outcome.issues());
 	}
 
 	@Test
@@ -123,6 +130,8 @@ public class GameEntityTest {
 			assertEquals(0, ((PlayersTurnBegun) event2).turn);
 			
 			assertTrue(outcome.state().isStarted);
+			
+			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When (idempotent)
 			outcome = driver.run(new StartGame());
@@ -132,6 +141,8 @@ public class GameEntityTest {
 			assertEquals("abc", ((GameStarted) reply).gameId);
 			
 			assertEquals(0, outcome.events().size());
+			
+			assertEquals(Collections.emptyList(), outcome.issues());
 	}
 
 	@Test
@@ -160,6 +171,8 @@ public class GameEntityTest {
 			assertEquals("abc", ((PlayersTurnBegun) event2).gameId);
 			assertEquals("Bob", ((PlayersTurnBegun) event2).playerId);
 			assertEquals(1, ((PlayersTurnBegun) event2).turn);
+			
+			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When
 			outcome = driver.run(new EndTurn("Bob", 1));
@@ -181,6 +194,8 @@ public class GameEntityTest {
 			assertEquals("abc", ((PlayersTurnBegun) event2).gameId);
 			assertEquals("Alice", ((PlayersTurnBegun) event2).playerId);
 			assertEquals(2, ((PlayersTurnBegun) event2).turn);
+			
+			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When (idempotent)
 			outcome = driver.run(new EndTurn("Bob", 1));
@@ -192,6 +207,8 @@ public class GameEntityTest {
 			assertEquals(1, ((PlayersTurnEnded) reply).turn);
 			
 			assertEquals(0, outcome.events().size());
+			
+			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When (negative)
 			outcome = driver.run(new EndTurn("Bob", 0));
@@ -201,6 +218,8 @@ public class GameEntityTest {
 			assertEquals("not your turn to end", ((InvalidCommandException)reply).getMessage());
 			
 			assertEquals(0, outcome.events().size());
+			
+			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When (negative)
 			outcome = driver.run(new EndTurn("Bob", 2));
@@ -210,6 +229,8 @@ public class GameEntityTest {
 			assertEquals("not your turn to end", ((InvalidCommandException)reply).getMessage());
 			
 			assertEquals(0, outcome.events().size());
+			
+			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When (negative)
 			outcome = driver.run(new EndTurn("Alice", 1));
@@ -219,6 +240,8 @@ public class GameEntityTest {
 			assertEquals("not your turn to end", ((InvalidCommandException)reply).getMessage());
 			
 			assertEquals(0, outcome.events().size());
+			
+			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When
 			outcome = driver.run(new EndTurn("Alice", 2));
@@ -228,5 +251,7 @@ public class GameEntityTest {
 			assertEquals("Alice", ((PlayersTurnEnded) reply).playerId);
 			
 			assertEquals(2, outcome.events().size());
+			
+			assertEquals(Collections.emptyList(), outcome.issues());
 	}
 }
