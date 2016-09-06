@@ -30,11 +30,11 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		b.setCommandHandler(
 			ProposeGame.class, 
 			(cmd, ctx) -> {
-				GameProposed gameProposed = new GameProposed(cmd.gameId);
+				GameProposed gameProposed = new GameProposed(cmd.getGameId());
 				if(state() == GameState.EMPTY) {
 					return ctx.thenPersist(gameProposed, evt -> ctx.reply(evt));
 				} else { // already proposed, we're idempotent, so reply GameProposed
-					assert state().gameId == cmd.gameId; // this must hold as this is the identifier for this entity!
+					assert state().gameId == cmd.getGameId(); // this must hold as this is the identifier for this entity!
 					ctx.reply(gameProposed);
 					return ctx.done();
 				}
@@ -49,9 +49,9 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		b.setCommandHandler(
 			JoinGame.class, 
 			(cmd, ctx) -> {
-				PlayerJoinedGame playerJoined = new PlayerJoinedGame(state().gameId, cmd.playerId);
+				PlayerJoinedGame playerJoined = new PlayerJoinedGame(state().gameId, cmd.getPlayerId());
 				// idempotency again
-				if(!state().hasPlayer(cmd.playerId)) {
+				if(!state().hasPlayer(cmd.getPlayerId())) {
 					return ctx.thenPersist(playerJoined, evt -> ctx.reply(evt));
 				} else {
 					ctx.reply(playerJoined);
@@ -95,10 +95,10 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		b.setCommandHandler(
 			EndTurn.class,
 			(cmd, ctx) -> {
-				if(cmd.turn == state().turn && cmd.playerId.equals(state().getCurrentTurnsPlayersId())) {
+				if(cmd.getTurn() == state().turn && cmd.getPlayerId().equals(state().getCurrentTurnsPlayersId())) {
 					PlayersTurnEnded playersTurnEnded = new PlayersTurnEnded(
 						state().gameId, 
-						cmd.playerId, 
+						cmd.getPlayerId(), 
 						state().turn
 					);
 					PlayersTurnBegun playersTurnBegun = new PlayersTurnBegun(
@@ -110,8 +110,8 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 						Arrays.asList(playersTurnEnded, playersTurnBegun), 
 						() -> ctx.reply(playersTurnEnded)
 					);
-				} else if(cmd.turn == state().turn-1 && cmd.playerId.equals(state().getPreviousTurnsPlayerId())) { //idempotency
-					ctx.reply(new PlayersTurnEnded(state().gameId, cmd.playerId, cmd.turn));
+				} else if(cmd.getTurn() == state().turn-1 && cmd.getPlayerId().equals(state().getPreviousTurnsPlayerId())) { //idempotency
+					ctx.reply(new PlayersTurnEnded(state().gameId, cmd.getPlayerId(), cmd.getTurn()));
 					return ctx.done();
 				} else {
 					ctx.invalidCommand("not your turn to end");

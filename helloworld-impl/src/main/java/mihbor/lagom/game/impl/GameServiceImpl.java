@@ -9,7 +9,6 @@ import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
 import akka.Done;
 import akka.NotUsed;
 import mihbor.lagom.game.api.GameService;
-import mihbor.lagom.game.impl.GameCommand.*;
 
 public class GameServiceImpl implements GameService {
 
@@ -27,7 +26,8 @@ public class GameServiceImpl implements GameService {
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
-	    	return ref.ask(new ProposeGame(id)).thenApply(evt -> Done.getInstance());
+	    	return ref.ask(ProposeGame.builder().gameId(id).build())
+	    		.thenApply(evt -> Done.getInstance());
 		};
 	}
 
@@ -37,7 +37,8 @@ public class GameServiceImpl implements GameService {
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
-	    	return ref.ask(new JoinGame(playerId)).thenApply(evt -> Done.getInstance());
+	    	return ref.ask(JoinGame.builder().playerId(playerId).build())
+	    		.thenApply(evt -> Done.getInstance());
 		};
 	}
 
@@ -47,7 +48,8 @@ public class GameServiceImpl implements GameService {
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
-	    	return ref.ask(new StartGame()).thenApply(evt -> Done.getInstance());
+	    	return ref.ask(StartGame.builder().build())
+	    		.thenApply(evt -> Done.getInstance());
 		};
 	}
 
@@ -57,7 +59,8 @@ public class GameServiceImpl implements GameService {
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
-	    	return ref.ask(new EndTurn(playerId, turn)).thenApply(evt -> Done.getInstance());
+	    	return ref.ask(EndTurn.builder().playerId(playerId).turn(turn).build())
+	    		.thenApply(evt -> Done.getInstance());
 		};
 	}
 

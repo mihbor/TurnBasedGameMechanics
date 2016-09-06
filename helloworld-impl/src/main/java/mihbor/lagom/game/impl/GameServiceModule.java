@@ -11,9 +11,7 @@ public class GameServiceModule extends AbstractModule implements ServiceGuiceSup
 
 	@Override
 	protected void configure() {
-		 bindServices(serviceBinding(GameService.class, GameServiceImpl.class),
-			 //temporarily, will delete later
-			 serviceBinding(HelloService.class, HelloServiceImpl.class));
+		 bindServices(serviceBinding(GameService.class, GameServiceImpl.class));
 	}
 
 }
