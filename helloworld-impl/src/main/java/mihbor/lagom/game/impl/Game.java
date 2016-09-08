@@ -29,9 +29,7 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		b.setCommandHandler(
 			ProposeGameImpl.class, 
 			(cmd, ctx) -> {
-				GameProposed gameProposed = GameProposedImpl.builder()
-					.gameId(cmd.getGameId())
-					.build();
+				GameProposed gameProposed = GameProposedImpl.of(cmd.getGameId());
 				if(state() == GameState.EMPTY) {
 					return ctx.thenPersist(gameProposed, evt -> ctx.reply(evt));
 				} else { // already proposed, we're idempotent, so reply GameProposed
@@ -50,10 +48,8 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		b.setCommandHandler(
 			JoinGameImpl.class, 
 			(cmd, ctx) -> {
-				PlayerJoinedGame playerJoined = PlayerJoinedGameImpl.builder()
-					.gameId(state().gameId)
-					.playerId(cmd.getPlayerId())
-					.build();
+				PlayerJoinedGame playerJoined = PlayerJoinedGameImpl
+					.of(state().gameId, cmd.getPlayerId());
 				// idempotency again
 				if(!state().hasPlayer(cmd.getPlayerId())) {
 					return ctx.thenPersist(playerJoined, evt -> ctx.reply(evt));
@@ -73,15 +69,10 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 			StartGameImpl.class, 
 			(cmd, ctx) -> {
 				Preconditions.checkState(state().getPlayerCount() > 0, "can't start game without at least one player");
-				GameStarted gameStarted = GameStartedImpl.builder()
-					.gameId(state().gameId)
-					.build();
+				GameStarted gameStarted = GameStartedImpl.of(state().gameId);
 				if(!state().isStarted) {
-					PlayersTurnBegun playersTurnBegun = PlayersTurnBegunImpl.builder()
-						.gameId(state().gameId)
-						.playerId(state().getNextTurnsPlayersId())
-						.turn(0)
-						.build();
+					PlayersTurnBegun playersTurnBegun = PlayersTurnBegunImpl
+						.of(state().gameId, state().getNextTurnsPlayersId(), 0);
 					return ctx.thenPersistAll(
 						Arrays.asList(gameStarted, playersTurnBegun),
 						() -> ctx.reply(gameStarted)
@@ -102,26 +93,17 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 			EndTurnImpl.class,
 			(cmd, ctx) -> {
 				if(cmd.getTurn() == state().turn && cmd.getPlayerId().equals(state().getCurrentTurnsPlayersId())) {
-					PlayersTurnEnded playersTurnEnded = PlayersTurnEndedImpl.builder()
-						.gameId(state().gameId) 
-						.playerId(cmd.getPlayerId()) 
-						.turn(state().turn)
-						.build();
-					PlayersTurnBegun playersTurnBegun = PlayersTurnBegunImpl.builder()
-						.gameId(state().gameId)
-						.playerId(state().getNextTurnsPlayersId())
-						.turn(state().turn+1)
-						.build();
+					PlayersTurnEnded playersTurnEnded = PlayersTurnEndedImpl
+						.of(state().gameId, cmd.getPlayerId(), state().turn);
+					PlayersTurnBegun playersTurnBegun = PlayersTurnBegunImpl
+						.of(state().gameId, state().getNextTurnsPlayersId(), state().turn+1);
 					return ctx.thenPersistAll(
 						Arrays.asList(playersTurnEnded, playersTurnBegun), 
 						() -> ctx.reply(playersTurnEnded)
 					);
-				} else if(cmd.getTurn() == state().turn-1 && cmd.getPlayerId().equals(state().getPreviousTurnsPlayerId())) { //idempotency
-					ctx.reply(PlayersTurnEndedImpl.builder()
-						.gameId(state().gameId)
-						.playerId(cmd.getPlayerId())
-						.turn(cmd.getTurn())
-						.build());
+				} else if(cmd.getTurn() == state().turn-1 && cmd.getPlayerId().equals(state().getPreviousTurnsPlayerId())) {
+					//idempotency
+					ctx.reply(PlayersTurnEndedImpl.of(state().gameId, cmd.getPlayerId(), cmd.getTurn()));
 					return ctx.done();
 				} else {
 					ctx.invalidCommand("not your turn to end");
