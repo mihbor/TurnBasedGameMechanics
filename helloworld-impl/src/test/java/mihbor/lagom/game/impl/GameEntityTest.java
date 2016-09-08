@@ -15,7 +15,6 @@ import akka.actor.ActorSystem;
 import akka.testkit.JavaTestKit;
 
 import mihbor.lagom.game.impl.GameEvent.*;
-import mihbor.lagom.game.impl.GameCommand.*;
 
 public class GameEntityTest {
 
@@ -38,7 +37,7 @@ public class GameEntityTest {
 			PersistentEntityTestDriver<GameCommand, GameEvent, GameState> driver = 
 				new PersistentEntityTestDriver<>(system, new Game(), null);
 		//When
-			Outcome<GameEvent, GameState> outcome = driver.run(ProposeGame.builder().gameId("abc").build());
+			Outcome<GameEvent, GameState> outcome = driver.run(ProposeGameImpl.builder().gameId("abc").build());
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			Object reply = outcome.getReplies().get(0);
@@ -58,9 +57,9 @@ public class GameEntityTest {
 		//Given
 			PersistentEntityTestDriver<GameCommand, GameEvent, GameState> driver = 
 				new PersistentEntityTestDriver<>(system, new Game(), null);
-			driver.run(ProposeGame.builder().gameId("abc").build());
+			driver.run(ProposeGameImpl.builder().gameId("abc").build());
 		//When
-			Outcome<GameEvent, GameState> outcome = driver.run(JoinGame.builder().playerId("Alice").build());
+			Outcome<GameEvent, GameState> outcome = driver.run(JoinGameImpl.builder().playerId("Alice").build());
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			Object reply = outcome.getReplies().get(0);
@@ -77,7 +76,7 @@ public class GameEntityTest {
 			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When
-			outcome = driver.run(JoinGame.builder().playerId("Bob").build());
+			outcome = driver.run(JoinGameImpl.builder().playerId("Bob").build());
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			reply = outcome.getReplies().get(0);
@@ -94,7 +93,7 @@ public class GameEntityTest {
 			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When (idempotent)
-			outcome = driver.run(JoinGame.builder().playerId("Bob").build());
+			outcome = driver.run(JoinGameImpl.builder().playerId("Bob").build());
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			reply = outcome.getReplies().get(0);
@@ -114,11 +113,11 @@ public class GameEntityTest {
 			PersistentEntityTestDriver<GameCommand, GameEvent, GameState> driver = 
 				new PersistentEntityTestDriver<>(system, new Game(), null);
 			
-			driver.run(ProposeGame.builder().gameId("abc").build(), 
-				JoinGame.builder().playerId("Alice").build(), 
-				JoinGame.builder().playerId("Betty").build());
+			driver.run(ProposeGameImpl.builder().gameId("abc").build(), 
+				JoinGameImpl.builder().playerId("Alice").build(), 
+				JoinGameImpl.builder().playerId("Betty").build());
 		//When
-			Outcome<GameEvent, GameState> outcome = driver.run(StartGame.builder().build());
+			Outcome<GameEvent, GameState> outcome = driver.run(StartGameImpl.builder().build());
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			Object reply = outcome.getReplies().get(0);
@@ -137,7 +136,7 @@ public class GameEntityTest {
 			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When (idempotent)
-			outcome = driver.run(StartGame.builder().build());
+			outcome = driver.run(StartGameImpl.builder().build());
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			reply = outcome.getReplies().get(0);
@@ -153,12 +152,12 @@ public class GameEntityTest {
 		//Given
 			PersistentEntityTestDriver<GameCommand, GameEvent, GameState> driver = 
 				new PersistentEntityTestDriver<>(system, new Game(), null);
-			driver.run(ProposeGame.builder().gameId("abc").build(), 
-				JoinGame.builder().playerId("Alice").build(), 
-				JoinGame.builder().playerId("Bob").build(), 
-				StartGame.builder().build());
+			driver.run(ProposeGameImpl.builder().gameId("abc").build(), 
+				JoinGameImpl.builder().playerId("Alice").build(), 
+				JoinGameImpl.builder().playerId("Bob").build(), 
+				StartGameImpl.builder().build());
 		//When
-			Outcome<GameEvent, GameState> outcome = driver.run(EndTurn.builder().playerId("Alice").turn(0).build());
+			Outcome<GameEvent, GameState> outcome = driver.run(EndTurnImpl.builder().playerId("Alice").turn(0).build());
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			Object reply = outcome.getReplies().get(0);
@@ -181,7 +180,7 @@ public class GameEntityTest {
 			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When
-			outcome = driver.run(EndTurn.builder().playerId("Bob").turn(1).build());
+			outcome = driver.run(EndTurnImpl.builder().playerId("Bob").turn(1).build());
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			reply = outcome.getReplies().get(0);
@@ -204,7 +203,7 @@ public class GameEntityTest {
 			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When (idempotent)
-			outcome = driver.run(EndTurn.builder().playerId("Bob").turn(1).build());
+			outcome = driver.run(EndTurnImpl.builder().playerId("Bob").turn(1).build());
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			reply = outcome.getReplies().get(0);
@@ -217,7 +216,7 @@ public class GameEntityTest {
 			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When (negative)
-			outcome = driver.run(EndTurn.builder().playerId("Bob").turn(0).build());
+			outcome = driver.run(EndTurnImpl.builder().playerId("Bob").turn(0).build());
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			reply = outcome.getReplies().get(0);
@@ -228,7 +227,7 @@ public class GameEntityTest {
 			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When (negative)
-			outcome = driver.run(EndTurn.builder().playerId("Bob").turn(2).build());
+			outcome = driver.run(EndTurnImpl.builder().playerId("Bob").turn(2).build());
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			reply = outcome.getReplies().get(0);
@@ -239,7 +238,7 @@ public class GameEntityTest {
 			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When (negative)
-			outcome = driver.run(EndTurn.builder().playerId("Alice").turn(1).build());
+			outcome = driver.run(EndTurnImpl.builder().playerId("Alice").turn(1).build());
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			reply = outcome.getReplies().get(0);
@@ -250,7 +249,7 @@ public class GameEntityTest {
 			assertEquals(Collections.emptyList(), outcome.issues());
 
 		//When
-			outcome = driver.run(EndTurn.builder().playerId("Alice").turn(2).build());
+			outcome = driver.run(EndTurnImpl.builder().playerId("Alice").turn(2).build());
 		//Then
 			assertEquals(1, outcome.getReplies().size());
 			reply = outcome.getReplies().get(0);

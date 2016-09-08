@@ -26,7 +26,7 @@ public class GameServiceImpl implements GameService {
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
-	    	return ref.ask(ProposeGame.builder().gameId(id).build())
+	    	return ref.ask(ProposeGameImpl.builder().gameId(id).build())
 	    		.thenApply(evt -> Done.getInstance());
 		};
 	}
@@ -37,7 +37,7 @@ public class GameServiceImpl implements GameService {
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
-	    	return ref.ask(JoinGame.builder().playerId(playerId).build())
+	    	return ref.ask(JoinGameImpl.builder().playerId(playerId).build())
 	    		.thenApply(evt -> Done.getInstance());
 		};
 	}
@@ -48,7 +48,7 @@ public class GameServiceImpl implements GameService {
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
-	    	return ref.ask(StartGame.builder().build())
+	    	return ref.ask(StartGameImpl.builder().build())
 	    		.thenApply(evt -> Done.getInstance());
 		};
 	}
@@ -59,7 +59,7 @@ public class GameServiceImpl implements GameService {
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
-	    	return ref.ask(EndTurn.builder().playerId(playerId).turn(turn).build())
+	    	return ref.ask(EndTurnImpl.builder().playerId(playerId).turn(turn).build())
 	    		.thenApply(evt -> Done.getInstance());
 		};
 	}

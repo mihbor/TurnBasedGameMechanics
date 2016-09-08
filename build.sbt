@@ -16,7 +16,7 @@ lazy val helloworldImpl = project("helloworld-impl")
     libraryDependencies ++= Seq(
       lagomJavadslPersistence,
       lagomJavadslTestKit,
-      lagomJavadslImmutables
+      "org.immutables" % "value" % "2.3"
     )
   )
   .settings(lagomForkedTestSettings: _*)

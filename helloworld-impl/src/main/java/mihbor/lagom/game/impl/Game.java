@@ -6,7 +6,6 @@ import java.util.Arrays;
 import com.google.gdata.util.common.base.Preconditions;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntity;
 
-import mihbor.lagom.game.impl.GameCommand.*;
 import mihbor.lagom.game.impl.GameEvent.*;
 
 public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
@@ -28,7 +27,7 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 	private void proposeGameBehavior(PersistentEntity<GameCommand, GameEvent, GameState>.BehaviorBuilder b) {
 
 		b.setCommandHandler(
-			ProposeGame.class, 
+			ProposeGameImpl.class, 
 			(cmd, ctx) -> {
 				GameProposed gameProposed = new GameProposed(cmd.getGameId());
 				if(state() == GameState.EMPTY) {
@@ -47,7 +46,7 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 	private void joinGameBehavior(PersistentEntity<GameCommand, GameEvent, GameState>.BehaviorBuilder b) {
 		
 		b.setCommandHandler(
-			JoinGame.class, 
+			JoinGameImpl.class, 
 			(cmd, ctx) -> {
 				PlayerJoinedGame playerJoined = new PlayerJoinedGame(state().gameId, cmd.getPlayerId());
 				// idempotency again
@@ -66,7 +65,7 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 	private void startGameBehavior(PersistentEntity<GameCommand, GameEvent, GameState>.BehaviorBuilder b) {
 		
 		b.setCommandHandler(
-			StartGame.class, 
+			StartGameImpl.class, 
 			(cmd, ctx) -> {
 				Preconditions.checkState(state().getPlayerCount() > 0, "can't start game without at least one player");
 				GameStarted gameStarted = new GameStarted(state().gameId);
@@ -93,7 +92,7 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 	private void endTurnBehavior(PersistentEntity<GameCommand, GameEvent, GameState>.BehaviorBuilder b) {
 		
 		b.setCommandHandler(
-			EndTurn.class,
+			EndTurnImpl.class,
 			(cmd, ctx) -> {
 				if(cmd.getTurn() == state().turn && cmd.getPlayerId().equals(state().getCurrentTurnsPlayersId())) {
 					PlayersTurnEnded playersTurnEnded = new PlayersTurnEnded(
