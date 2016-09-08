@@ -7,9 +7,7 @@ import com.lightbend.lagom.serialization.Jsonable;
 
 import mihbor.lagom.game.impl.GameEvent.*;
 
-@Value.Style(
-	typeImmutable="*Impl"
-)
+@Value.Style(typeImmutable="*Impl")
 public interface GameCommand extends Jsonable {
 
 	@Value.Immutable

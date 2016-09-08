@@ -29,7 +29,9 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		b.setCommandHandler(
 			ProposeGameImpl.class, 
 			(cmd, ctx) -> {
-				GameProposed gameProposed = new GameProposed(cmd.getGameId());
+				GameProposed gameProposed = GameProposedImpl.builder()
+					.gameId(cmd.getGameId())
+					.build();
 				if(state() == GameState.EMPTY) {
 					return ctx.thenPersist(gameProposed, evt -> ctx.reply(evt));
 				} else { // already proposed, we're idempotent, so reply GameProposed
@@ -40,7 +42,7 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 			}
 		);
 		
-		b.setEventHandler(GameProposed.class, evt -> state().gameProposed(evt.gameId));
+		b.setEventHandler(GameProposedImpl.class, evt -> state().gameProposed(evt.getGameId()));
 	}
 
 	private void joinGameBehavior(PersistentEntity<GameCommand, GameEvent, GameState>.BehaviorBuilder b) {
@@ -48,7 +50,10 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 		b.setCommandHandler(
 			JoinGameImpl.class, 
 			(cmd, ctx) -> {
-				PlayerJoinedGame playerJoined = new PlayerJoinedGame(state().gameId, cmd.getPlayerId());
+				PlayerJoinedGame playerJoined = PlayerJoinedGameImpl.builder()
+					.gameId(state().gameId)
+					.playerId(cmd.getPlayerId())
+					.build();
 				// idempotency again
 				if(!state().hasPlayer(cmd.getPlayerId())) {
 					return ctx.thenPersist(playerJoined, evt -> ctx.reply(evt));
@@ -59,7 +64,7 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 			}
 		);
 		
-		b.setEventHandler(PlayerJoinedGame.class, evt -> state().playerJoinedGame(evt.playerId));
+		b.setEventHandler(PlayerJoinedGameImpl.class, evt -> state().playerJoinedGame(evt.getPlayerId()));
 	}
 	
 	private void startGameBehavior(PersistentEntity<GameCommand, GameEvent, GameState>.BehaviorBuilder b) {
@@ -68,13 +73,15 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 			StartGameImpl.class, 
 			(cmd, ctx) -> {
 				Preconditions.checkState(state().getPlayerCount() > 0, "can't start game without at least one player");
-				GameStarted gameStarted = new GameStarted(state().gameId);
+				GameStarted gameStarted = GameStartedImpl.builder()
+					.gameId(state().gameId)
+					.build();
 				if(!state().isStarted) {
-					PlayersTurnBegun playersTurnBegun = new PlayersTurnBegun(
-						state().gameId,
-						state().getNextTurnsPlayersId(),
-						0
-					);
+					PlayersTurnBegun playersTurnBegun = PlayersTurnBegunImpl.builder()
+						.gameId(state().gameId)
+						.playerId(state().getNextTurnsPlayersId())
+						.turn(0)
+						.build();
 					return ctx.thenPersistAll(
 						Arrays.asList(gameStarted, playersTurnBegun),
 						() -> ctx.reply(gameStarted)
@@ -86,7 +93,7 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 			}
 		);
 		
-		b.setEventHandler(GameStarted.class, evt -> state().gameStarted());
+		b.setEventHandler(GameStartedImpl.class, evt -> state().gameStarted());
 	}
 
 	private void endTurnBehavior(PersistentEntity<GameCommand, GameEvent, GameState>.BehaviorBuilder b) {
@@ -95,22 +102,26 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 			EndTurnImpl.class,
 			(cmd, ctx) -> {
 				if(cmd.getTurn() == state().turn && cmd.getPlayerId().equals(state().getCurrentTurnsPlayersId())) {
-					PlayersTurnEnded playersTurnEnded = new PlayersTurnEnded(
-						state().gameId, 
-						cmd.getPlayerId(), 
-						state().turn
-					);
-					PlayersTurnBegun playersTurnBegun = new PlayersTurnBegun(
-						state().gameId,
-						state().getNextTurnsPlayersId(),
-						state().turn+1
-					);
+					PlayersTurnEnded playersTurnEnded = PlayersTurnEndedImpl.builder()
+						.gameId(state().gameId) 
+						.playerId(cmd.getPlayerId()) 
+						.turn(state().turn)
+						.build();
+					PlayersTurnBegun playersTurnBegun = PlayersTurnBegunImpl.builder()
+						.gameId(state().gameId)
+						.playerId(state().getNextTurnsPlayersId())
+						.turn(state().turn+1)
+						.build();
 					return ctx.thenPersistAll(
 						Arrays.asList(playersTurnEnded, playersTurnBegun), 
 						() -> ctx.reply(playersTurnEnded)
 					);
 				} else if(cmd.getTurn() == state().turn-1 && cmd.getPlayerId().equals(state().getPreviousTurnsPlayerId())) { //idempotency
-					ctx.reply(new PlayersTurnEnded(state().gameId, cmd.getPlayerId(), cmd.getTurn()));
+					ctx.reply(PlayersTurnEndedImpl.builder()
+						.gameId(state().gameId)
+						.playerId(cmd.getPlayerId())
+						.turn(cmd.getTurn())
+						.build());
 					return ctx.done();
 				} else {
 					ctx.invalidCommand("not your turn to end");
@@ -119,12 +130,12 @@ public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
 			}
 		);
 		
-		b.setEventHandler(PlayersTurnEnded.class, evt -> state().playersTurnEnded(evt.playerId));
+		b.setEventHandler(PlayersTurnEndedImpl.class, evt -> state().playersTurnEnded(evt.getPlayerId()));
 	}
 
 	private void commonEventHandlers(PersistentEntity<GameCommand, GameEvent, GameState>.BehaviorBuilder b) {
 		
 		// this event is generated by both StartGame and EndTurn commands:
-		b.setEventHandler(PlayersTurnBegun.class, evt -> state().playersTurnBegun(evt.playerId, evt.turn));
+		b.setEventHandler(PlayersTurnBegunImpl.class, evt -> state().playersTurnBegun(evt.getPlayerId(), evt.getTurn()));
 	}
 }
