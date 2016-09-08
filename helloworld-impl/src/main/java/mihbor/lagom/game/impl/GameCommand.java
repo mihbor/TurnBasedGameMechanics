@@ -13,7 +13,7 @@ public interface GameCommand extends Jsonable {
 
 	@Value.Immutable @JsonSerialize
 	public interface ProposeGame extends GameCommand, PersistentEntity.ReplyType<GameProposed> {
-		@Value.Parameter String getGameId();
+		String getGameId();
 	}
 
 	@Value.Immutable @JsonSerialize
