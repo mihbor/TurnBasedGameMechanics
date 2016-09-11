@@ -35,9 +35,9 @@ public interface GameService extends Service {
 	default Descriptor descriptor() {
 		return named("helloservice").withCalls(
 			pathCall("/api/proposeGame/:gameId", this::proposeGame),
-			pathCall("/api/joinGame/:gameId", this::joinGame),
-			pathCall("/api/startGame/:gameId", this::startGame),
-			pathCall("/api/endTurn/:gameId", this::endTurn)
+			pathCall("/api/joinGame/:gameId"   , this::joinGame),
+			pathCall("/api/startGame/:gameId"  , this::startGame),
+			pathCall("/api/endTurn/:gameId"    , this::endTurn)
 		).withAutoAcl(true);
 	}
 }

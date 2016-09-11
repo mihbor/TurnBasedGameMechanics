@@ -7,7 +7,6 @@ import com.google.gdata.util.common.base.Preconditions;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntity;
 
 import mihbor.lagom.game.api.*;
-import mihbor.lagom.game.api.GameEvent.*;
 
 public class GameEntity extends PersistentEntity<GameCommand, GameEvent, GameState> {
 
@@ -72,7 +71,7 @@ public class GameEntity extends PersistentEntity<GameCommand, GameEvent, GameSta
 				Preconditions.checkState(state().getPlayerCount() > 0, "can't start game without at least one player");
 				GameStartedEvent gameStarted = GameStartedEvent.of(state().gameId);
 				if(!state().isStarted) {
-					PlayersTurnBegun playersTurnBegun = PlayersTurnBegunEvent
+					PlayersTurnBegunEvent playersTurnBegun = PlayersTurnBegunEvent
 						.of(state().gameId, state().getNextTurnsPlayersId(), 0);
 					return ctx.thenPersistAll(
 						Arrays.asList(gameStarted, playersTurnBegun),

@@ -4,12 +4,10 @@ import static com.lightbend.lagom.javadsl.testkit.ServiceTest.defaultSetup;
 import static com.lightbend.lagom.javadsl.testkit.ServiceTest.withServer;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
-import mihbor.lagom.game.api.EndTurnCmd;
-import mihbor.lagom.game.api.GameService;
-import mihbor.lagom.game.api.JoinGameCmd;
-import mihbor.lagom.game.api.StartGameCmd;
+import mihbor.lagom.game.api.*;
 
 public class GameServiceTest {
 
@@ -29,6 +27,11 @@ public class GameServiceTest {
 	        service.endTurn("Abracadabra").invoke(EndTurnCmd.of("Bob", 1)).toCompletableFuture().get(5, SECONDS);
 	        service.endTurn("Abracadabra").invoke(EndTurnCmd.of("Alice", 2)).toCompletableFuture().get(5, SECONDS);
 	    });
+	}
+	
+	@Ignore //TODO
+	public void testNegative() throws Exception{
+		
 	}
 
 }
