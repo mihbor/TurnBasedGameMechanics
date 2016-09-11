@@ -8,17 +8,16 @@ import com.lightbend.lagom.javadsl.api.Service;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
 
 import akka.NotUsed;
-import mihbor.lagom.game.api.GameEvent.*;
 
 public interface GameService extends Service {
 	
-	abstract ServiceCall<NotUsed, GameProposed> proposeGame(String gameId);
+	abstract ServiceCall<NotUsed, GameProposedEvent> proposeGame(String gameId);
 	
-	abstract ServiceCall<NotUsed, PlayerJoinedGame> joinGame(String gameId, String playerId);
+	abstract ServiceCall<NotUsed, PlayerJoinedGameEvent> joinGame(String gameId, String playerId);
 	
-	abstract ServiceCall<NotUsed, GameStarted> startGame(String gameId);
+	abstract ServiceCall<NotUsed, GameStartedEvent> startGame(String gameId);
 	
-	abstract ServiceCall<NotUsed, PlayersTurnEnded> endTurn(String gameId, String playerId, long turn);
+	abstract ServiceCall<NotUsed, PlayersTurnEndedEvent> endTurn(String gameId, String playerId, long turn);
 
 	@Override
 	default Descriptor descriptor() {

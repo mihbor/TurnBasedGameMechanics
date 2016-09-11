@@ -6,7 +6,6 @@ import java.util.LinkedHashSet;
 import javax.annotation.concurrent.Immutable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.lightbend.lagom.serialization.CompressedJsonable;
 
@@ -29,12 +28,12 @@ public class GameState implements CompressedJsonable {
 
 	@JsonCreator
 	private GameState(
-		@JsonProperty("gameId") String gameId, 
-		@JsonProperty("playerIds") LinkedHashSet<String> playerIds, 
-		@JsonProperty("isStarted") boolean isStarted, 
-		@JsonProperty("turn") Long turn, 
-		@JsonProperty("currentPlayersIndex") Integer currentPlayersIndex, 
-		@JsonProperty("previousTurnsPlayerId") String previousTurnsPlayerId
+		String gameId, 
+		LinkedHashSet<String> playerIds, 
+		boolean isStarted, 
+		Long turn, 
+		Integer currentPlayersIndex, 
+		String previousTurnsPlayerId
 	) {
 		this.gameId = gameId;
 		this.playerIds = playerIds;

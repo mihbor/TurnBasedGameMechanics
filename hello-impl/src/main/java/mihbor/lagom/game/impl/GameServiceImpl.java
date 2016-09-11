@@ -7,8 +7,7 @@ import com.lightbend.lagom.javadsl.persistence.PersistentEntityRef;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
 
 import akka.NotUsed;
-import mihbor.lagom.game.api.GameEvent.*;
-import mihbor.lagom.game.api.GameService;
+import mihbor.lagom.game.api.*;
 
 public class GameServiceImpl implements GameService {
 
@@ -21,42 +20,42 @@ public class GameServiceImpl implements GameService {
 	}
 	
 	@Override
-	public ServiceCall<NotUsed, GameProposed> proposeGame(String id) {
+	public ServiceCall<NotUsed, GameProposedEvent> proposeGame(String id) {
 
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
-	    	return ref.ask(ProposeGameImpl.builder().gameId(id).build());
+	    	return ref.ask(ProposeGameCmd.of(id));
 		};
 	}
 
 	@Override
-	public ServiceCall<NotUsed, PlayerJoinedGame> joinGame(String id, String playerId) {
+	public ServiceCall<NotUsed, PlayerJoinedGameEvent> joinGame(String id, String playerId) {
 
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
-	    	return ref.ask(JoinGameImpl.builder().playerId(playerId).build());
+	    	return ref.ask(JoinGameCmd.of(playerId));
 		};
 	}
 
 	@Override
-	public ServiceCall<NotUsed, GameStarted> startGame(String id) {
+	public ServiceCall<NotUsed, GameStartedEvent> startGame(String id) {
 
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
-	    	return ref.ask(StartGameImpl.builder().build());
+	    	return ref.ask(StartGameCmd.of());
 		};
 	}
 
 	@Override
-	public ServiceCall<NotUsed, PlayersTurnEnded> endTurn(String id, String playerId, long turn) {
+	public ServiceCall<NotUsed, PlayersTurnEndedEvent> endTurn(String id, String playerId, long turn) {
 
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
-	    	return ref.ask(EndTurnImpl.builder().playerId(playerId).turn(turn).build());
+	    	return ref.ask(EndTurnCmd.of(playerId, turn));
 		};
 	}
 
