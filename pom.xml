@@ -94,6 +94,20 @@
                 <artifactId>${conductr.lib.name}</artifactId>
                 <version>1.4.7</version>
             </dependency>
+            
+            <!-- managing up a bunch of dependencies to work around:
+            	 https://github.com/lagom/lagom/issues/159 -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport</artifactId>
+                <version>4.0.36.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-common</artifactId>
+                <version>4.0.36.Final</version>
+            </dependency>
+            
 	        <dependency>
 	        	<groupId>junit</groupId>
 	        	<artifactId>junit</artifactId>

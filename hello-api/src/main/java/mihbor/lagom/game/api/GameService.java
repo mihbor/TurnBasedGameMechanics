@@ -11,21 +11,33 @@ import akka.NotUsed;
 
 public interface GameService extends Service {
 	
-	abstract ServiceCall<NotUsed, GameProposedEvent> proposeGame(String gameId);
+	/**
+	 * curl http://localhost:9000/api/proposeGame/abcd
+	 */
+	ServiceCall<NotUsed, GameProposedEvent> proposeGame(String gameId);
 	
-	abstract ServiceCall<NotUsed, PlayerJoinedGameEvent> joinGame(String gameId, String playerId);
+	/**
+	 * curl -H "Content-Type: application/json" -X POST -d '{"playerId": "Alice"}' http://localhost:9000/api/joinGame/abcd
+	 */
+	ServiceCall<JoinGameCmd, PlayerJoinedGameEvent> joinGame(String gameId);
 	
-	abstract ServiceCall<NotUsed, GameStartedEvent> startGame(String gameId);
+	/**
+	 * curl -H "Content-Type: application/json" -X POST -d "{}" http://localhost:9000/api/startGame/abcd
+	 */
+	ServiceCall<StartGameCmd, GameStartedEvent> startGame(String gameId);
 	
-	abstract ServiceCall<NotUsed, PlayersTurnEndedEvent> endTurn(String gameId, String playerId, long turn);
+	/**
+	 * curl -H "Content-Type: application/json" -X POST -d '{"playerId": "Alice", "turn" : "0"}' http://localhost:9000/api/endTurn/abcd
+	 */
+	ServiceCall<EndTurnCmd, PlayersTurnEndedEvent> endTurn(String gameId);
 
 	@Override
 	default Descriptor descriptor() {
 		return named("helloservice").withCalls(
 			pathCall("/api/proposeGame/:gameId", this::proposeGame),
-			pathCall("/api/joinGame/:gameId/:playerId", this::joinGame),
+			pathCall("/api/joinGame/:gameId", this::joinGame),
 			pathCall("/api/startGame/:gameId", this::startGame),
-			pathCall("/api/endTurn/:gameId/:playerId/:turn", this::endTurn)
+			pathCall("/api/endTurn/:gameId", this::endTurn)
 		).withAutoAcl(true);
 	}
 }

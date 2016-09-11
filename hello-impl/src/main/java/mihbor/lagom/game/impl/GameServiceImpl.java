@@ -8,6 +8,7 @@ import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
 
 import akka.NotUsed;
 import mihbor.lagom.game.api.*;
+import mihbor.lagom.game.impl.GameEntity;
 
 public class GameServiceImpl implements GameService {
 
@@ -30,32 +31,32 @@ public class GameServiceImpl implements GameService {
 	}
 
 	@Override
-	public ServiceCall<NotUsed, PlayerJoinedGameEvent> joinGame(String id, String playerId) {
+	public ServiceCall<JoinGameCmd, PlayerJoinedGameEvent> joinGame(String id) {
 
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(GameEntity.class, id);
-	    	return ref.ask(JoinGameCmd.of(playerId));
+	    	return ref.ask(request);
 		};
 	}
 
 	@Override
-	public ServiceCall<NotUsed, GameStartedEvent> startGame(String id) {
+	public ServiceCall<StartGameCmd, GameStartedEvent> startGame(String id) {
 
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(GameEntity.class, id);
-	    	return ref.ask(StartGameCmd.of());
+	    	return ref.ask(request);
 		};
 	}
 
 	@Override
-	public ServiceCall<NotUsed, PlayersTurnEndedEvent> endTurn(String id, String playerId, long turn) {
+	public ServiceCall<EndTurnCmd, PlayersTurnEndedEvent> endTurn(String id) {
 
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(GameEntity.class, id);
-	    	return ref.ask(EndTurnCmd.of(playerId, turn));
+	    	return ref.ask(request);
 		};
 	}
 

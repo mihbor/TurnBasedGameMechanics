@@ -20,8 +20,8 @@
         	<artifactId>lagom-javadsl-immutables_2.11</artifactId>
        	</dependency>
         <dependency>
-		    <groupId>com.lightbend.lagom</groupId>
-		    <artifactId>lagom-javadsl-jackson_2.11</artifactId>
-	    </dependency>
+            <groupId>com.lightbend.lagom</groupId>
+            <artifactId>lagom-javadsl-persistence_2.11</artifactId>
+        </dependency>
     </dependencies>
 </project>

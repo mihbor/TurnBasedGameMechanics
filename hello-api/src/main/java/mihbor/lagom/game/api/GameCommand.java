@@ -1,12 +1,10 @@
-package mihbor.lagom.game.impl;
+package mihbor.lagom.game.api;
 
 import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntity.ReplyType;
 import com.lightbend.lagom.serialization.Jsonable;
-
-import mihbor.lagom.game.api.*;
 
 @Value.Style(typeImmutable="*Cmd", allParameters=true)
 public interface GameCommand extends Jsonable {
@@ -40,5 +38,5 @@ public interface GameCommand extends Jsonable {
 		String getPlayerId();
 		long getTurn();
 	}
-	
+
 }
