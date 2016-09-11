@@ -9,7 +9,7 @@ import com.lightbend.lagom.javadsl.persistence.PersistentEntity;
 import mihbor.lagom.game.api.*;
 import mihbor.lagom.game.api.GameEvent.*;
 
-public class Game extends PersistentEntity<GameCommand, GameEvent, GameState> {
+public class GameEntity extends PersistentEntity<GameCommand, GameEvent, GameState> {
 
 	@Override
 	public PersistentEntity<GameCommand, GameEvent, GameState>.Behavior initialBehavior(Optional<GameState> snapshot) {

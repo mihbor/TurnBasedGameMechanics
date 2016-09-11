@@ -16,7 +16,7 @@ public class GameServiceImpl implements GameService {
 	@Inject
 	public GameServiceImpl(PersistentEntityRegistry entityRegistry) {
 		this.entityRegistry = entityRegistry;
-		entityRegistry.register(Game.class);
+		entityRegistry.register(GameEntity.class);
 	}
 	
 	@Override
@@ -24,7 +24,7 @@ public class GameServiceImpl implements GameService {
 
 		return request -> {
     		// Create the game entity for the given ID
-	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
+	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(GameEntity.class, id);
 	    	return ref.ask(ProposeGameCmd.of(id));
 		};
 	}
@@ -34,7 +34,7 @@ public class GameServiceImpl implements GameService {
 
 		return request -> {
     		// Create the game entity for the given ID
-	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
+	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(GameEntity.class, id);
 	    	return ref.ask(JoinGameCmd.of(playerId));
 		};
 	}
@@ -44,7 +44,7 @@ public class GameServiceImpl implements GameService {
 
 		return request -> {
     		// Create the game entity for the given ID
-	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
+	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(GameEntity.class, id);
 	    	return ref.ask(StartGameCmd.of());
 		};
 	}
@@ -54,7 +54,7 @@ public class GameServiceImpl implements GameService {
 
 		return request -> {
     		// Create the game entity for the given ID
-	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(Game.class, id);
+	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(GameEntity.class, id);
 	    	return ref.ask(EndTurnCmd.of(playerId, turn));
 		};
 	}

@@ -35,7 +35,7 @@ public class GameEntityTest {
 	public void testProposeGame() {
 		//Given
 			PersistentEntityTestDriver<GameCommand, GameEvent, GameState> driver = 
-				new PersistentEntityTestDriver<>(system, new Game(), null);
+				new PersistentEntityTestDriver<>(system, new GameEntity(), null);
 		//When
 			Outcome<GameEvent, GameState> outcome = driver.run(ProposeGameCmd.of("abc"));
 		//Then
@@ -56,7 +56,7 @@ public class GameEntityTest {
 	public void testJoinGame() {
 		//Given
 			PersistentEntityTestDriver<GameCommand, GameEvent, GameState> driver = 
-				new PersistentEntityTestDriver<>(system, new Game(), null);
+				new PersistentEntityTestDriver<>(system, new GameEntity(), null);
 			driver.run(ProposeGameCmd.of("abc"));
 		//When
 			Outcome<GameEvent, GameState> outcome = driver.run(JoinGameCmd.of("Alice"));
@@ -111,7 +111,7 @@ public class GameEntityTest {
 	public void testStartGame() {
 		//Given
 			PersistentEntityTestDriver<GameCommand, GameEvent, GameState> driver = 
-				new PersistentEntityTestDriver<>(system, new Game(), null);
+				new PersistentEntityTestDriver<>(system, new GameEntity(), null);
 			
 			driver.run(ProposeGameCmd.of("abc"), 
 				JoinGameCmd.of("Alice"), 
@@ -151,7 +151,7 @@ public class GameEntityTest {
 	public void testEndTurn() {
 		//Given
 			PersistentEntityTestDriver<GameCommand, GameEvent, GameState> driver = 
-				new PersistentEntityTestDriver<>(system, new Game(), null);
+				new PersistentEntityTestDriver<>(system, new GameEntity(), null);
 			driver.run(ProposeGameCmd.of("abc"), 
 				JoinGameCmd.of("Alice"), 
 				JoinGameCmd.of("Bob"), 
