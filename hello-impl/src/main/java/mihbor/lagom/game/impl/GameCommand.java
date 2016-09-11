@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntity;
 import com.lightbend.lagom.serialization.Jsonable;
 
-import mihbor.lagom.game.impl.GameEvent.*;
+import mihbor.lagom.game.api.GameEvent.*;
 
 @Value.Style(typeImmutable="*Impl", allParameters=true)
 public interface GameCommand extends Jsonable {

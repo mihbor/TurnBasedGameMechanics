@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
@@ -24,7 +25,8 @@ public final class HelloState implements CompressedJsonable {
   public final String timestamp;
 
   @JsonCreator
-  public HelloState(String message, String timestamp) {
+  public HelloState(@JsonProperty("message") String message, 
+	  @JsonProperty("timestamp") String timestamp) {
     this.message = Preconditions.checkNotNull(message, "message");
     this.timestamp = Preconditions.checkNotNull(timestamp, "timestamp");
   }

@@ -25,6 +25,10 @@
             <artifactId>lagom-javadsl-persistence_2.11</artifactId>
         </dependency>
         <dependency>
+        	<groupId>com.lightbend.lagom</groupId>
+        	<artifactId>lagom-javadsl-immutables_2.11</artifactId>
+       	</dependency>
+        <dependency>
             <groupId>com.lightbend.lagom</groupId>
             <artifactId>lagom-logback_2.11</artifactId>
         </dependency>
@@ -40,11 +44,6 @@
             <groupId>com.typesafe.conductr</groupId>
             <artifactId>${conductr.lib.name}</artifactId>
         </dependency>
-        <dependency>
-        	<groupId>org.immutables</groupId>
-        	<artifactId>value</artifactId>
-  			<scope>provided</scope>
-       	</dependency>
     </dependencies>
 
     <build>

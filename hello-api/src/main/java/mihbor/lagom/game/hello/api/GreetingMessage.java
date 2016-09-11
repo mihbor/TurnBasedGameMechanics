@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
@@ -15,7 +16,7 @@ public final class GreetingMessage {
   public final String message;
 
   @JsonCreator
-  public GreetingMessage(String message) {
+  public GreetingMessage(@JsonProperty("message") String message) {
     this.message = Preconditions.checkNotNull(message, "message");
   }
 
