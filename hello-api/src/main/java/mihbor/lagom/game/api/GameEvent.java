@@ -3,10 +3,12 @@ package mihbor.lagom.game.api;
 import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.lightbend.lagom.javadsl.persistence.AggregateEvent;
+import com.lightbend.lagom.javadsl.persistence.AggregateEventTag;
 import com.lightbend.lagom.serialization.Jsonable;
 
 @Value.Style(typeImmutable="*Event", allParameters=true)
-public interface GameEvent extends Jsonable {
+public interface GameEvent extends AggregateEvent<GameEvent>, Jsonable {
 
 	@Value.Immutable @JsonDeserialize
 	public interface GameProposed extends GameEvent {
@@ -51,5 +53,14 @@ public interface GameEvent extends Jsonable {
 	@Value.Immutable @JsonDeserialize
 	public interface GameFinished extends GameEvent {
 		/* out of scope for now */
+	}
+	
+	@Override
+	default public AggregateEventTag<GameEvent> aggregateTag() {
+		return Tag.INSTANCE;
+	}
+	
+	public class Tag {
+		public static final AggregateEventTag<GameEvent> INSTANCE = AggregateEventTag.of(GameEvent.class);
 	}
 }
