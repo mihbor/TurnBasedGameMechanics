@@ -15,6 +15,7 @@ import mihbor.lagom.game.impl.GameEntity;
 public class GameServiceImpl implements GameService {
 
 	private final PersistentEntityRegistry entityRegistry;
+	private final CassandraSession cassandraSession;
 
 	@Inject
 	public GameServiceImpl(
@@ -23,6 +24,7 @@ public class GameServiceImpl implements GameService {
 	    CassandraReadSide cassandraReadSide) {
 		
 		this.entityRegistry = entityRegistry;
+		this.cassandraSession = cassandraSession;
 		entityRegistry.register(GameEntity.class);
 	}
 	
@@ -64,6 +66,13 @@ public class GameServiceImpl implements GameService {
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(GameEntity.class, id);
 	    	return ref.ask(request);
 		};
+	}
+
+	@Override
+	public ServiceCall<NotUsed, String> describeKeyspaces() {
+		return request -> cassandraSession
+			.selectOne("SELECT * FROM hello_impl.messages;")
+			.thenApply(o -> o.get().toString());
 	}
 
 }
