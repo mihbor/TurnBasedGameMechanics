@@ -12,7 +12,7 @@ import akka.NotUsed;
 public interface GameService extends Service {
 	
 	/**
-	 * curl http://localhost:9000/api/proposeGame/abcd
+	 * curl -X POST http://localhost:9000/api/proposeGame/abcd
 	 */
 	ServiceCall<NotUsed, GameProposedEvent> proposeGame(String gameId);
 	
@@ -22,9 +22,9 @@ public interface GameService extends Service {
 	ServiceCall<JoinGameCmd, PlayerJoinedGameEvent> joinGame(String gameId);
 	
 	/**
-	 * curl -H "Content-Type: application/json" -X POST -d "{}" http://localhost:9000/api/startGame/abcd
+	 * curl -X POST http://localhost:9000/api/startGame/abcd
 	 */
-	ServiceCall<StartGameCmd, GameStartedEvent> startGame(String gameId);
+	ServiceCall<NotUsed, GameStartedEvent> startGame(String gameId);
 	
 	/**
 	 * curl -H "Content-Type: application/json" -X POST -d '{"playerId": "Alice", "turn" : "0"}' http://localhost:9000/api/endTurn/abcd

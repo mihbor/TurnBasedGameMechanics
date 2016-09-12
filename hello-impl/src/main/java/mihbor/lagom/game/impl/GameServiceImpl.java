@@ -5,6 +5,8 @@ import javax.inject.Inject;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRef;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
+import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraReadSide;
+import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraSession;
 
 import akka.NotUsed;
 import mihbor.lagom.game.api.*;
@@ -15,7 +17,11 @@ public class GameServiceImpl implements GameService {
 	private final PersistentEntityRegistry entityRegistry;
 
 	@Inject
-	public GameServiceImpl(PersistentEntityRegistry entityRegistry) {
+	public GameServiceImpl(
+		PersistentEntityRegistry entityRegistry,
+	    CassandraSession cassandraSession,
+	    CassandraReadSide cassandraReadSide) {
+		
 		this.entityRegistry = entityRegistry;
 		entityRegistry.register(GameEntity.class);
 	}
@@ -41,12 +47,12 @@ public class GameServiceImpl implements GameService {
 	}
 
 	@Override
-	public ServiceCall<StartGameCmd, GameStartedEvent> startGame(String id) {
+	public ServiceCall<NotUsed, GameStartedEvent> startGame(String id) {
 
 		return request -> {
     		// Create the game entity for the given ID
 	    	PersistentEntityRef<GameCommand> ref = entityRegistry.refFor(GameEntity.class, id);
-	    	return ref.ask(request);
+	    	return ref.ask(StartGameCmd.of());
 		};
 	}
 
