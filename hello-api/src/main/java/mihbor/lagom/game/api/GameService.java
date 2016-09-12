@@ -1,11 +1,12 @@
 package mihbor.lagom.game.api;
 
 import static com.lightbend.lagom.javadsl.api.Service.named;
-import static com.lightbend.lagom.javadsl.api.Service.pathCall;
+import static com.lightbend.lagom.javadsl.api.Service.restCall;
 
 import com.lightbend.lagom.javadsl.api.Descriptor;
 import com.lightbend.lagom.javadsl.api.Service;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
+import com.lightbend.lagom.javadsl.api.transport.Method;
 
 import akka.NotUsed;
 
@@ -34,10 +35,10 @@ public interface GameService extends Service {
 	@Override
 	default Descriptor descriptor() {
 		return named("helloservice").withCalls(
-			pathCall("/api/proposeGame/:gameId", this::proposeGame),
-			pathCall("/api/joinGame/:gameId"   , this::joinGame),
-			pathCall("/api/startGame/:gameId"  , this::startGame),
-			pathCall("/api/endTurn/:gameId"    , this::endTurn)
+			restCall(Method.POST, "/api/proposeGame/:gameId", this::proposeGame),
+			restCall(Method.POST, "/api/joinGame/:gameId"   , this::joinGame),
+			restCall(Method.POST, "/api/startGame/:gameId"  , this::startGame),
+			restCall(Method.POST, "/api/endTurn/:gameId"    , this::endTurn)
 		).withAutoAcl(true);
 	}
 }
