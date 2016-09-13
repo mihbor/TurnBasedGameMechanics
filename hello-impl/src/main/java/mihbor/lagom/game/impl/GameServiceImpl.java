@@ -26,6 +26,7 @@ public class GameServiceImpl implements GameService {
 		this.entityRegistry = entityRegistry;
 		this.cassandraSession = cassandraSession;
 		entityRegistry.register(GameEntity.class);
+		cassandraReadSide.register(GameEventProcessor.class);
 	}
 	
 	@Override
