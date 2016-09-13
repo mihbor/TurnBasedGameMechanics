@@ -67,7 +67,7 @@ public class GameEventProcessor extends CassandraReadSideProcessor<GameEvent> {
 					return NotUsed.getInstance();
 				})
 			)
-	        .thenCompose(x -> noOffset());
+	        .thenCompose(x -> selectOffset(session));
 	}
 
 	private CompletionStage<Optional<UUID>> selectOffset(CassandraSession session) {
