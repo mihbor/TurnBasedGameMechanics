@@ -70,10 +70,10 @@ public class GameServiceImpl implements GameService {
 	}
 
 	@Override
-	public ServiceCall<NotUsed, String> describeKeyspaces() {
+	public ServiceCall<NotUsed, String> getAllGames() {
 		return request -> cassandraSession
-			.selectOne("SELECT * FROM hello_impl.messages;")
-			.thenApply(o -> o.get().toString());
+			.selectOne("SELECT id FROM hello_impl.game;")
+			.thenApply(o -> o.get().getString("id"));
 	}
 
 }

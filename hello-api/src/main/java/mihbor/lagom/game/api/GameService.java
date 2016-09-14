@@ -32,7 +32,7 @@ public interface GameService extends Service {
 	 */
 	ServiceCall<EndTurnCmd, PlayersTurnEndedEvent> endTurn(String gameId);
 	
-	ServiceCall<NotUsed, String> describeKeyspaces();
+	ServiceCall<NotUsed, String> getAllGames();
 
 	@Override
 	default Descriptor descriptor() {
@@ -41,7 +41,7 @@ public interface GameService extends Service {
 			restCall(POST, "/api/joinGame/:gameId"   , this::joinGame),
 			restCall(POST, "/api/startGame/:gameId"  , this::startGame),
 			restCall(POST, "/api/endTurn/:gameId"    , this::endTurn),
-			restCall(GET , "/api/describe"           , this::describeKeyspaces)
+			restCall(GET , "/api/games"              , this::getAllGames)
 		).withAutoAcl(true);
 	}
 }
