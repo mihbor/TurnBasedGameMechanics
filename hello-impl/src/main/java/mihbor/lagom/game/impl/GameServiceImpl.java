@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRef;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
-import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraReadSide;
 import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraSession;
 
 import akka.NotUsed;
@@ -20,13 +19,11 @@ public class GameServiceImpl implements GameService {
 	@Inject
 	public GameServiceImpl(
 		PersistentEntityRegistry entityRegistry,
-	    CassandraSession cassandraSession,
-	    CassandraReadSide cassandraReadSide) {
+	    CassandraSession cassandraSession) {
 		
 		this.entityRegistry = entityRegistry;
 		this.cassandraSession = cassandraSession;
 		entityRegistry.register(GameEntity.class);
-		cassandraReadSide.register(GameEventProcessor.class);
 	}
 	
 	@Override

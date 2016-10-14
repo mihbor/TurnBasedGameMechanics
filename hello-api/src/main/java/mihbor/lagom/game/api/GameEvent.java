@@ -55,12 +55,10 @@ public interface GameEvent extends AggregateEvent<GameEvent>, Jsonable {
 		/* out of scope for now */
 	}
 	
+	AggregateEventTag<GameEvent> TAG = AggregateEventTag.of(GameEvent.class);
+	
 	@Override
 	default public AggregateEventTag<GameEvent> aggregateTag() {
-		return Tag.INSTANCE;
-	}
-	
-	public class Tag {
-		public static final AggregateEventTag<GameEvent> INSTANCE = AggregateEventTag.of(GameEvent.class);
+		return TAG;
 	}
 }
