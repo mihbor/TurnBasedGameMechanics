@@ -10,8 +10,6 @@ import com.lightbend.lagom.javadsl.persistence.PersistentEntityRef;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-
 import javax.inject.Inject;
 import mihbor.lagom.game.hello.api.GreetingMessage;
 import mihbor.lagom.game.hello.api.HelloService;
