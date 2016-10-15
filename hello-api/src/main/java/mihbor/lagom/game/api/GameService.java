@@ -48,7 +48,7 @@ public interface GameService extends Service {
 				restCall(POST, "/api/endTurn/:gameId"    , this::endTurn),
 				restCall(GET , "/api/games"              , this::getAllGames)
 			)
-			.publishing(topic("events", this::eventsTopic))
+			.publishing(topic("game-events", this::eventsTopic))
 			.withAutoAcl(true);
 	}
 }

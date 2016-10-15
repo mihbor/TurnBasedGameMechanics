@@ -2,12 +2,14 @@ package mihbor.lagom.game.api;
 
 import org.immutables.value.Value;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.lightbend.lagom.javadsl.persistence.AggregateEvent;
 import com.lightbend.lagom.javadsl.persistence.AggregateEventTag;
 import com.lightbend.lagom.serialization.Jsonable;
 
 @Value.Style(typeImmutable="*Event", allParameters=true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = Void.class)
 public interface GameEvent extends AggregateEvent<GameEvent>, Jsonable {
 
 	@Value.Immutable @JsonDeserialize
