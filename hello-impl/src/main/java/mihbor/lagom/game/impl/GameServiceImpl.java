@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import com.lightbend.lagom.javadsl.api.ServiceCall;
+import com.lightbend.lagom.javadsl.api.broker.Topic;
+import com.lightbend.lagom.javadsl.broker.TopicProducer;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRef;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
 import com.lightbend.lagom.javadsl.persistence.ReadSide;
@@ -80,6 +82,13 @@ public class GameServiceImpl implements GameService {
 				.map(row -> row.getString("id"))
 				.collect(Collectors.toList())
 			);
+	}
+
+	@Override
+	public Topic<GameEvent> eventsTopic() {
+		return TopicProducer.singleStreamWithOffset(offset -> 
+			entityRegistry.eventStream(GameEvent.TAG, offset)
+		);
 	}
 
 }
