@@ -33,7 +33,7 @@ public class GameServiceTest {
 	    	GameService service = server.client(GameService.class);
 	    	String game = "Abracadabra";
 	    //When
-	        GameProposedEvent e1 = service.proposeGame(game).invoke().toCompletableFuture().get(5, SECONDS);
+	        GameProposedEvent e1 = service.proposeGame(game).invoke().toCompletableFuture().get(10, SECONDS);
 	    //Then
 	        assertEquals(game, e1.getGameId());
 	    //When
@@ -76,13 +76,21 @@ public class GameServiceTest {
 	    	GameService service = server.client(GameService.class);
 	    	String game1 = "Abra";
 	    	String game2 = "cadabra";
-	    //When
-	        List<String> results = service.proposeGame(game1).invoke()
+	        service.proposeGame(game1).invoke()
 	        	.thenCompose(r1 -> service.proposeGame(game2).invoke())
-	        	.thenCompose(r2 -> service.getAllGames().invoke())
 	        	.toCompletableFuture().get(5, SECONDS);
+	        
+	    //When (retry up to 5 seconds)
+	        List<String> results = service.getAllGames().invoke().toCompletableFuture().get(5, SECONDS);
+	        int i = 0;
+	        while(results.size()<=1 && i < 10000){
+	        	Thread.sleep(500);
+	        	i+=500;
+	        	results = service.getAllGames().invoke().toCompletableFuture().get(5, SECONDS);
+	        }
+	        if(i>0) System.out.printf("Took %1.1f seconds to get results.\n", i/1000.0);
 	    //Then
-	        assertEquals(2, results.size());
+	        assertEquals(3, results.size());
 	}
 	
 	@Ignore //TODO

@@ -75,11 +75,10 @@ public class GameServiceImpl implements GameService {
 	@Override
 	public ServiceCall<NotUsed, List<String>> getAllGames() {
 		return request -> cassandraSession
-			.selectAll("SELECT id FROM hello_impl.game;")
-			.thenApply(
-				list -> list.stream().map(
-					row -> row.getString("id")
-				).collect(Collectors.toList())
+			.selectAll("SELECT id FROM game;")
+			.thenApply(list -> list.stream()
+				.map(row -> row.getString("id"))
+				.collect(Collectors.toList())
 			);
 	}
 

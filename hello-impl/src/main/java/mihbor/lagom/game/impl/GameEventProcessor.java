@@ -55,9 +55,10 @@ public class GameEventProcessor extends ReadSideProcessor<GameEvent> {
 	}
 
 	private CompletionStage<Done> createTable() {
-		return session
-			.executeCreateTable("CREATE TABLE IF NOT EXISTS game ("
-				+ "id text, PRIMARY KEY (id))");
+		return session.executeCreateTable(
+			"CREATE TABLE IF NOT EXISTS game ("
+			+ "id text, PRIMARY KEY (id))"
+		);
 	}
 	
 	private CompletionStage<Done> prepare() {
