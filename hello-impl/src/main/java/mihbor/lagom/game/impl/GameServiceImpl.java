@@ -1,10 +1,14 @@
 package mihbor.lagom.game.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 
 import com.lightbend.lagom.javadsl.api.ServiceCall;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRef;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
+import com.lightbend.lagom.javadsl.persistence.ReadSide;
 import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraSession;
 
 import akka.NotUsed;
@@ -19,11 +23,13 @@ public class GameServiceImpl implements GameService {
 	@Inject
 	public GameServiceImpl(
 		PersistentEntityRegistry entityRegistry,
+		ReadSide readSide,
 	    CassandraSession cassandraSession) {
 		
 		this.entityRegistry = entityRegistry;
 		this.cassandraSession = cassandraSession;
 		entityRegistry.register(GameEntity.class);
+		readSide.register(GameEventProcessor.class);
 	}
 	
 	@Override
@@ -67,10 +73,14 @@ public class GameServiceImpl implements GameService {
 	}
 
 	@Override
-	public ServiceCall<NotUsed, String> getAllGames() {
+	public ServiceCall<NotUsed, List<String>> getAllGames() {
 		return request -> cassandraSession
-			.selectOne("SELECT id FROM hello_impl.game;")
-			.thenApply(o -> o.get().getString("id"));
+			.selectAll("SELECT id FROM hello_impl.game;")
+			.thenApply(
+				list -> list.stream().map(
+					row -> row.getString("id")
+				).collect(Collectors.toList())
+			);
 	}
 
 }

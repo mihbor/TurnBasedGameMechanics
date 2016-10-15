@@ -2,8 +2,6 @@ package mihbor.lagom.game.impl;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 
 import javax.inject.Inject;
