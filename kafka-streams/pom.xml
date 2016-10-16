@@ -12,55 +12,68 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>io.confluent</groupId>
-			<artifactId>streams-examples</artifactId>
-			<version>${confluent.version}</version>
-            <classifier>tests</classifier>
-            <scope>test</scope>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hello-api</artifactId>
+			<version>${project.version}</version>
 		</dependency>
-		
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.11</artifactId>
-            <version>0.10.0.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.11</artifactId>
-            <version>0.10.0.1</version>
-            <classifier>test</classifier>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.curator</groupId>
-            <artifactId>curator-test</artifactId>
-            <version>2.9.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.confluent</groupId>
-            <artifactId>kafka-schema-registry</artifactId>
-            <version>${confluent.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.confluent</groupId>
-            <artifactId>kafka-schema-registry</artifactId>
-            <version>${confluent.version}</version>
-            <!-- Required for e.g. schema registry's RestApp -->
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
+
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-streams</artifactId>
+			<version>${kafka.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka_2.11</artifactId>
+			<version>${kafka.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka_2.11</artifactId>
+			<version>0.10.0.1</version>
+			<classifier>test</classifier>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>3.3.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.curator</groupId>
+			<artifactId>curator-test</artifactId>
+			<version>2.9.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.confluent</groupId>
+			<artifactId>kafka-schema-registry</artifactId>
+			<version>${confluent.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.confluent</groupId>
+			<artifactId>kafka-schema-registry</artifactId>
+			<version>${confluent.version}</version>
+			<!-- Required for e.g. schema registry's RestApp -->
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<properties>
-        <confluent.version>3.0.1</confluent.version>
-    </properties>
-    <repositories>
-        <repository>
-            <id>confluent</id>
-            <url>http://packages.confluent.io/maven/</url>
-        </repository>
-    </repositories>
+		<kafka.version>0.10.0.1</kafka.version>
+		<confluent.version>3.0.1</confluent.version>
+	</properties>
+	<repositories>
+		<repository>
+			<id>confluent</id>
+			<url>http://packages.confluent.io/maven/</url>
+		</repository>
+	</repositories>
 </project>

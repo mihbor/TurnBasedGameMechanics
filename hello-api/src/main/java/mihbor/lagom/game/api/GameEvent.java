@@ -11,10 +11,10 @@ import com.lightbend.lagom.serialization.Jsonable;
 @Value.Style(typeImmutable="*Event", allParameters=true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = Void.class)
 public interface GameEvent extends AggregateEvent<GameEvent>, Jsonable {
+	String getGameId();
 
 	@Value.Immutable @JsonDeserialize
 	public interface GameProposed extends GameEvent {
-		String getGameId();
 	}
 
 	@Value.Immutable @JsonDeserialize
@@ -25,7 +25,6 @@ public interface GameEvent extends AggregateEvent<GameEvent>, Jsonable {
 
 	@Value.Immutable @JsonDeserialize
 	public interface GameStarted extends GameEvent {
-		String getGameId();
 	}
 
 	@Value.Immutable @JsonDeserialize
