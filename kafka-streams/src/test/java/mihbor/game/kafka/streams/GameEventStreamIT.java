@@ -76,9 +76,13 @@ public class GameEventStreamIT {
 	        new KeyValue<>("Abra", 7L)
 		);
 
-	    final Deserializer<JsonNode> deserializer = new JsonDeserializer();
-	    final Serializer<JsonNode> serializer = new JsonSerializer();
-	    final Serde<JsonNode> serde = Serdes.serdeFrom(serializer, deserializer);
+        Map<String, Object> serdeProps = new HashMap<>();
+        serdeProps.put("JsonPOJOClass", GameEvent.class);
+	    final Deserializer<GameEvent> deserializer = new JsonPOJODeserializer<>();
+	    deserializer.configure(serdeProps, false);
+	    final Serializer<GameEvent> serializer = new JsonPOJOSerializer<>();
+	    serializer.configure(serdeProps, false);
+	    final Serde<GameEvent> serde = Serdes.serdeFrom(serializer, deserializer);
 
 	    Properties streamsConfiguration = new Properties();
 	    streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, "game-event-integration-test");
@@ -93,9 +97,9 @@ public class GameEventStreamIT {
 	    
 	    KStreamBuilder builder = new KStreamBuilder();
 	    
-	    KStream<Void, JsonNode> textLines = builder.stream((Serde<Void>)null, serde, inputTopic);
+	    KStream<Void, GameEvent> textLines = builder.stream((Serde<Void>)null, serde, inputTopic);
 	    KStream<String, Long> out = textLines
-	    	.map((key, event) -> new KeyValue<>(event.get("gameId").textValue(), event.get("gameId").textValue()))
+	    	.map((key, event) -> new KeyValue<>(event.getGameId(), event.getGameId()))
 	      // This will change the stream type from `KStream<String, String>` to
 	      // `KTable<String, Long>` (word -> count).  We must provide a name for
 	      // the resulting KTable, which will be used to name e.g. its associated
