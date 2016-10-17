@@ -18,6 +18,15 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.lightbend.lagom</groupId>
+			<artifactId>lagom-javadsl-immutables_2.11</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-pcollections</artifactId>
+			<version>2.7.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka-streams</artifactId>
 			<version>${kafka.version}</version>
